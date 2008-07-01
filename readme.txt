@@ -1,7 +1,7 @@
 === Decategorizer ===
 Contributors: aesqe
 Donate link: http://skyphe.org/code/wordpress/decategorizer/
-Tags: category base, url, permalinks
+Tags: category, category base, url, uri, links, permalinks, redirection
 Requires at least: 2.5.0
 Tested up to: 2.5.1
 Stable tag: trunk
