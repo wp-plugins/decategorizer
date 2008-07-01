@@ -33,26 +33,26 @@ just get lots of "Error 404 - Not found" pages.
 	need to set up a few redirection rules in WordPress admin under 
 	Manage->Redirection. 
 
-	(Note: replace YOUR_CATEGORY_BASE in target URL with your 
+	(Note: replace YOUR-CATEGORY-BASE in target URL with your 
 	category base text. If you're using the default option, 
 	"category", then put that instead (without quotes).) 
 
 	1.	Source URL: 
 		/([12][09][012789][0-9][-].*|(?![12][09][012789][0-9].*))/(.*)/(.*)/page/(.*)/
 		Target URL:
-		/YOUR_CATEGORY_BASE/$1/$2/$3/page/$4/
+		/YOUR-CATEGORY-BASE/$1/$2/$3/page/$4/
 		Put a check next to "Regex" 
 
 	2.	Source URL:
 		/([12][09][012789][0-9][-].*|(?![12][09][012789][0-9].*))/(.*)/page/(.*)/
 		Target URL:
-		/YOUR_CATEGORY_BASE/$1/$2/page/$3/
+		/YOUR-CATEGORY-BASE/$1/$2/page/$3/
 		Put a check next to "Regex" 
 
 	3.	Source URL: 
 		/([12][09][012789][0-9][-].*|(?![12][09][012789][0-9].*))/page/(.*)/ 
 		Target URL:
-		/YOUR_CATEGORY_BASE/$1/page/$2/
+		/YOUR-CATEGORY-BASE/$1/page/$2/
 		Put a check next to "Regex" 
 
 	4.	For each subcategory, you will have to add a new 
@@ -65,13 +65,13 @@ just get lots of "Error 404 - Not found" pages.
 		redirection rule will look like this:
 		
 		Source URL: /consequat/aliquam/news/
-		Target URL: /YOUR_CATEGORY_BASE/consequat/aliquam/news/
+		Target URL: /YOUR-CATEGORY-BASE/consequat/aliquam/news/
 		Do not place a check next to "Regex" or it won't work.
 		
 		Just one subcategory:
 		
 		Source URL: /consequat/aliquam/
-		Target URL: /YOUR_CATEGORY_BASE/consequat/aliquam/
+		Target URL: /YOUR-CATEGORY-BASE/consequat/aliquam/
 		And so on.
 5.	Now go activate the Decategorizer plugin.
 6.	That should be it.
@@ -81,4 +81,50 @@ just get lots of "Error 404 - Not found" pages.
 To see the end result before you decide to install, please visit 
 [wordpress.skyphe.org](http://wordpress.skyphe.org) and 
 browse around. You'll notice that no url contains "category" and still 
-everything works just fine. 
+everything works just fine.
+
+== Minor annoyances ==
+
+(added on July 1st 2008 at 2:37PM)
+
+1.	Please read this text from the "readme.txt" file, not online, to 
+	avoid any confusion that linebreaks in regex might cause :)
+
+2.	About subcategories:
+	"/first_category/subcategory/" will work
+	"/first_category/subcategory" will not (notice the missing 
+	trailing slash - /)
+	
+	To correct this, you could either:
+	a)	add a few mod_rewrite lines to your .htaccess file (please, do 
+		a search on the internet to find the solution that best matches 
+		your server configuration and your experience)
+		
+	b)	add a duplicate redirection rule for each subcategory, like this:
+		Source URL: /consequat/aliquam							(no trailing slash)
+		Target URL: /YOUR-CATEGORY-BASE/consequat/aliquam/		(trailing slash present)
+		
+	c)	do what i did (until i explore other options), although it's a 
+		very "unclean" solution:
+		add a "header: location" redirection to your main WordPress index.php.
+		
+		Default contents (between the php brackets):
+		////////////////////////////////////////////
+		
+			/* Short and sweet */
+			define('WP_USE_THEMES', true);
+			require('./wp-blog-header.php');
+		
+		With added redirection:
+		///////////////////////
+		
+			if(substr($_SERVER['REQUEST_URI'],-1) != "/")
+			{
+				header("Location: ".$_SERVER['REQUEST_URI']."/");
+			}
+			else
+			{
+				/* Short and sweet */
+				define('WP_USE_THEMES', true);
+				require('./wp-blog-header.php');
+			}
