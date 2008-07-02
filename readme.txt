@@ -35,7 +35,17 @@ just get lots of "Error 404 - Not found" pages.
 
 	(Note: replace YOUR-CATEGORY-BASE in target URL with your 
 	category base text. If you're using the default option, 
-	"category", then put that instead (without quotes).) 
+	"category", then put that instead (without quotes).)
+	
+	!
+			IMPORTANT: All redirections are
+	
+			Type: Simple Redirection 
+			
+			Method: Pass-through
+			
+			(Added on July 2nd 2008 at 6:07PM)
+	!
 
 	1.	Source URL: 
 		/([12][09][012789][0-9][-].*|(?![12][09][012789][0-9].*))/(.*)/(.*)/page/(.*)/
