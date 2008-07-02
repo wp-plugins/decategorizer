@@ -15,10 +15,10 @@ functions.
 Basically, it turns your URL's from something like 
 "http://yourdomain/category/news/" to "http://yourdomain/news/". 
 
-It is meant to be used together with Urban Giraffe's "Redirection" 
-plugin [Redirection](http://urbangiraffe.com/plugins/redirection/) 
-and a few redirections already set up. If used by itself, you'll 
-just get lots of "Error 404 - Not found" pages.
+It is meant to be used together with 
+[Urban Giraffe's Redirection](http://urbangiraffe.com/plugins/redirection/) 
+plugin and a few redirections already set up. If used by 
+itself, you'll just get lots of "Error 404 - Not found" pages.
 
 == Installation == 
 
