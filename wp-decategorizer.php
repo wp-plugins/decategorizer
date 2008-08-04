@@ -2,9 +2,13 @@
 /*
 Plugin Name: Decategorizer
 Plugin URI: http://skyphe.org/code/wordpress/decategorizer/
-Description: Removes "/category/" (category_base text) from your site links. It will do you no good by itself - it is meant to be used in conjuction with a plugin by Urban Giraffe called 'Redirection' (http://urbangiraffe.com/plugins/redirection/). Please read the complete tutorial on the plugin's homepage.
+Description: Removes "/category/" (category_base text) from your site links.
+It will do you no good by itself - it is meant to be used in conjuction with 
+a plugin by John Godley (Urban Giraffe) called 'Redirection' 
+(http://urbangiraffe.com/plugins/redirection/). Please read the complete 
+tutorial on the plugin's homepage.
 Author: Bruno "Aesqe" Babic
-Version: 0.1
+Version: 0.1a
 Author URI: http://skyphe.org
 ////////////////////////////////////////////////////////////////////
     This program is free software: you can redistribute it and/or modify
@@ -22,25 +26,27 @@ Author URI: http://skyphe.org
 ////////////////////////////////////////////////////////////////////
 */
 
-$cat_base = $option->category_base;
-
-if(empty($cat_base))
+function decategorizer( $permalink )
 {
-	$cat_base = "category";
-}
-
-function ae_decategorizer($permalink)
-{
-	global $cat_base;
-
-	if(strstr($permalink,"/".$cat_base."/"))
+	// set 'category_base' option back to defaut value - we don't want 
+	// it showing up anywhere anyway
+	if( ( $category_base = get_option('category_base') ) != "/category" )
 	{
-		$permalink = str_replace($cat_base."/","",$permalink);
+		update_option('category_base', "/category");
 	}
+	
+	// search for '/category/' in permalink
+	if(strstr($permalink, $category_base."/"))
+	{
+		// remove '/category' from the permalink
+		$permalink = str_replace($category_base, "", $permalink);
+	}
+	
 	return $permalink;
 }
 
-add_filter('get_pagenum_link', 'ae_decategorizer');
-add_filter('wp_list_categories','ae_decategorizer');
-add_filter('the_category','ae_decategorizer');
+// i hope these three cover all bases :)
+add_filter('get_pagenum_link', 	'decategorizer');
+add_filter('wp_list_categories','decategorizer');
+add_filter('the_category',		'decategorizer');
 ?>
