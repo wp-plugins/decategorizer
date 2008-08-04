@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage.
 Author: Bruno "Aesqe" Babic
-Version: 0.1a
+Version: 0.1b
 Author URI: http://skyphe.org
 ////////////////////////////////////////////////////////////////////
     This program is free software: you can redistribute it and/or modify

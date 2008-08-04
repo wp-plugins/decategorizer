@@ -20,7 +20,7 @@ It is meant to be used together with
 plugin and a few redirections already set up. If used by 
 itself, you'll just get lots of "Error 404 - Not found" pages.
 
-I recommend using Redirection version 2.x .
+I recommend using Redirection version 2.x.
 
 == Installation == 
 
@@ -39,7 +39,14 @@ I recommend using Redirection version 2.x .
 	will reset it to '/category'.
 
 	1.	Source URL: 
-			(?!^/[\d]{4}/)^/(.+)/page/([\d]*)/
+			(?!^/[\d]{4}/)^/(.+)/page/([\d]+)/
+			
+			Important: if you're using Redirection plugin v 1.x, you 
+			must replace the two + (plus) characters in regexp 
+			with * (star) characters
+			
+			(?!^/[\d]{4}/)^/(.*)/page/([\d]*)/
+			
 		Target URL:
 			/category/$1/page/$2/
 		
