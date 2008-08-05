@@ -22,6 +22,12 @@ itself, you'll just get lots of "Error 404 - Not found" pages.
 
 I recommend using Redirection version 2.x.
 
+**Changelog:**
+
+0.2 - added the filter to 'category_link' as well. No more "/category/" 
+in links when using "Google XML Sitemaps" and "Dagon Design Sitemap 
+Generator" plugins :)
+
 == Installation == 
 
 1.	Place the whole 'decategorizer' folder into your wordpress' 
@@ -120,10 +126,5 @@ everything works just fine.
 The only thing that comes to my mind is automatic creation of 
 redirection rules when the plugin is activated, and addition of a new 
 rule each time a new child category is created or modified.
-			
-== WARNINGS ==
 
-Plugin-generated sitemaps WILL include /YOUR-CATEGORY-BASE/ in URLs.
-
-This can probably be solved easily by filtering the sitemapping 
-plugin's output or modifying its code.
+I do intend to implement that.

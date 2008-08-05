@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage.
 Author: Bruno "Aesqe" Babic
-Version: 0.1c
+Version: 0.2
 Author URI: http://skyphe.org
 ////////////////////////////////////////////////////////////////////
     This program is free software: you can redistribute it and/or modify
@@ -26,27 +26,28 @@ Author URI: http://skyphe.org
 ////////////////////////////////////////////////////////////////////
 */
 
-function decategorizer( $permalink )
+// set 'category_base' option back to defaut value - we don't want 
+// it showing up anywhere anyway
+if( ( $category_base = get_option('category_base') ) != "/category" )
 {
-	// set 'category_base' option back to defaut value - we don't want 
-	// it showing up anywhere anyway
-	if( ( $category_base = get_option('category_base') ) != "/category" )
-	{
-		update_option('category_base', "/category");
-	}
-	
-	// search for '/category/' in permalink
-	if(strstr($permalink, $category_base."/"))
-	{
-		// remove '/category' from the permalink
-		$permalink = str_replace($category_base, "", $permalink);
-	}
-	
-	return $permalink;
+	update_option('category_base', "/category");
 }
 
-// i hope these three cover all bases :)
-add_filter('get_pagenum_link', 	'decategorizer');
-add_filter('wp_list_categories','decategorizer');
-add_filter('the_category',		'decategorizer');
+function decategorizer( $output )
+{
+	// search for '/category/' in permalink
+	if(strstr($output, "/category/"))
+	{
+		// remove '/category' from the permalink
+		$output = str_replace("/category", "", $output);
+	}
+	
+	return $output;
+}
+
+// i hope these four cover all the bases :)
+add_filter('category_link', 		'decategorizer', 100, 1);
+add_filter('get_pagenum_link', 		'decategorizer', 100, 1);
+add_filter('wp_list_categories',	'decategorizer', 100, 1);
+add_filter('the_category',			'decategorizer', 100, 1);
 ?>
