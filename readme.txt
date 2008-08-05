@@ -35,20 +35,27 @@ I recommend using Redirection version 2.x.
 	need to set up a few redirection rules in WordPress admin under 
 	Manage->Redirection. 
 
-	Note: no need to replace your 'category_base' option, the plugin
+	A note: no need to replace your 'category_base' option, the plugin
 	will reset it to '/category'.
+	
+	...and a question: Are TAG, AUTHOR, SEARCH and COMMENTS the only 
+	things besides categories that have pagination? I based this on 
+	the $wp_rewrite->rules output and haven't noticed pagination 
+	anywhere else. Drop me an e-mail if I'm forgetting something, or
+	just add it by yourself
+	(put '|^/NEW_TYPE/' after '|^/commments/').
 
 	1.	Source URL: 
-			(?!^/[\d]{4}/)^/(.+)/page/([\d]+)/
+			`(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.+)/page/([\d]+)/`
 			
 			Important: if you're using Redirection plugin v 1.x, you 
 			must replace the two + (plus) characters in regexp 
-			with * (star) characters
+			with * (star) characters - just use the regexp below:
 			
-			(?!^/[\d]{4}/)^/(.*)/page/([\d]*)/
+			`(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.*)/page/([\d]*)/`
 			
 		Target URL:
-			/category/$1/page/$2/
+			`/category/$1/page/$2/`
 		
 		Put a check next to "Regex"
 		
