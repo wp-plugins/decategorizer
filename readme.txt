@@ -15,18 +15,28 @@ Basically, it turns your URL's from something like
 "http://yourdomain/category/news/" to "http://yourdomain/news/". 
 
 It is meant to be used together with 
-[Urban Giraffe's Redirection](http://urbangiraffe.com/plugins/redirection/) 
-plugin and a few redirections already set up. If used by 
-itself, you'll just get lots of "Error 404 - Not found" pages.
+[John Godley's 'Redirection'](http://urbangiraffe.com/plugins/redirection/) 
+plugin. If used by itself, you'll just get lots of 
+"Error 404 - Not found" pages.
 
 I recommend using Redirection version 2.x.
+(Tested with version 2.0.4)
+
+**August 15th, 2008, ~9pm**
+Actually, I'm not even sure if it works with older versions now :|
+Will check tomorrow.
 
 **Changelog:**
 
+0.3		- added automatic creation of redirection 
+rules. PLEASE NOTE: Although I've been testing the plugin for the past 
+two hours, do try it at home first.
+REMINDER TO SELF: addslashes(), INSERT, save your sanity...
+
 0.2.1	- instead of setting back category_base to its default value, 
-the current value is used, so one's permalinks don't get broken if the 
-user decides to deactivate the plugin. Sorry for that, current users :/
-Please check your category_base value.
+the current value is used, so one's permalinks don't get broken if they 
+decide to deactivate the plugin. Sorry for that, current users :/
+Please check your 'category_base' value.
 
 0.2		- added the filter to 'category_link' as well. No more "/category/" 
 in links when using "Google XML Sitemaps" and "Dagon Design Sitemap 
@@ -41,10 +51,22 @@ Generator" plugins :)
 	yet.
 3.	Install Urban Giraffe's Redirection plugin the same way, 
 	if you haven't already done so.
-4.	No further setup is required for Decategorizer, but you will 
+4.	Activate 'Redirection' plugin.
+5.	No further setup is required for Decategorizer, but you might 
 	need to set up a few redirection rules in WordPress admin under 
 	Manage->Redirection. 
-
+	
+	
+	/**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//
+	
+	UNLESS SOMETHING WEIRD HAPPENED DURING THE PLUGIN ACTIVATION, 
+	STEPS 5.1 AND 5.2 DESCRIBED BELOW SHOULDN'T BE NECESSARY.
+	I WON'T DELETE THE TEXT, JUST IN CASE SOMETHING WEIRD DID HAPPEN 
+	DURING THE PLUGIN ACTIVATION :)
+	
+	/**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//
+	
+	
 	A note: replace YOUR-CATEGORY-BASE in target URL below with your 
 	category base text. If you're using the default option, 
 	"category", then put that in, instead (without quotes, of course).
@@ -56,7 +78,7 @@ Generator" plugins :)
 	just add it by yourself
 	(put '|^/NEW_TYPE/' after '|^/commments/').
 
-	1.	Source URL: 
+	5.1.	Source URL: 
 			`(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.+)/page/([\d]+)/`
 			
 			Important: if you're using Redirection plugin v 1.x, you 
@@ -75,7 +97,7 @@ Generator" plugins :)
 		Method:
 			Pass-through
 
-	2.	For each category that has a child category/categories, you 
+	5.2.	For each category that has a child category/categories, you 
 		will have to add a new redirection rule/rules. 
 		Sorry, it won't work any other way...
 
@@ -118,18 +140,22 @@ Generator" plugins :)
 
 == More info ==
 
-To see the end result before you decide to install (and, possibly, 
-start writing redirections for all 150 of your categories), please 
+To see the end result before you decide to install, please 
 visit [wordpress.skyphe.org](http://wordpress.skyphe.org) and 
 browse around. You'll notice that no url contains "category" and still 
 everything works just fine.
 
+I don't think I've ever written a readme before. Is it full of 
+spelling and grammar errors? Too long? I suck at explaining how things 
+work? Drop me an e-mail if something's bugging you about this text :)
+
 == Plans for the next version? ==
 
-(added on August 4th 2008 at 10:50PM)
+(added on August 15th 2008 at 9:27PM)
 
-The only thing that comes to my mind is automatic creation of 
-redirection rules when the plugin is activated, and addition of a new 
-rule each time a new child category is created or modified.
+No idea. Leave a comment here or on my site, or send me 
+an e-mail if you would like to see something added to the plugin.
 
-I do intend to implement that.
+Maybe an admin page that holds a single checkbox to enable/disable 
+the 'init' call? It might save a few milliseconds. I'm not kidding :)
+
