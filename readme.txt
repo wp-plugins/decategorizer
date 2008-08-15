@@ -3,12 +3,11 @@ Contributors: aesqe
 Donate link: http://skyphe.org/code/wordpress/decategorizer/
 Tags: category, category base, url, uri, links, permalinks, redirection
 Requires at least: 2.5.0
-Tested up to: 2.6
+Tested up to: 2.6.1
 Stable tag: trunk
 
-This plugin adds a filter (which removes category_base text from 
-permalinks) on get_pagenum_link, wp_list_categories and the_category 
-functions.
+This plugin removes 'category_base' from your permalinks. It is meant
+to be used with John Godley's 'Redirection' plugin.
 
 == Description == 
 
@@ -24,7 +23,12 @@ I recommend using Redirection version 2.x.
 
 **Changelog:**
 
-0.2 - added the filter to 'category_link' as well. No more "/category/" 
+0.2.1	- instead of setting back category_base to its default value, 
+the current value is used, so one's permalinks don't get broken if the 
+user decides to deactivate the plugin. Sorry for that, current users :/
+Please check your category_base value.
+
+0.2		- added the filter to 'category_link' as well. No more "/category/" 
 in links when using "Google XML Sitemaps" and "Dagon Design Sitemap 
 Generator" plugins :)
 
@@ -41,8 +45,9 @@ Generator" plugins :)
 	need to set up a few redirection rules in WordPress admin under 
 	Manage->Redirection. 
 
-	A note: no need to replace your 'category_base' option, the plugin
-	will reset it to '/category'.
+	A note: replace YOUR-CATEGORY-BASE in target URL below with your 
+	category base text. If you're using the default option, 
+	"category", then put that in, instead (without quotes, of course).
 	
 	...and a question: Are TAG, AUTHOR, SEARCH and COMMENTS the only 
 	things besides categories that have pagination? I based this on 
@@ -61,7 +66,7 @@ Generator" plugins :)
 			`(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.*)/page/([\d]*)/`
 			
 		Target URL:
-			`/category/$1/page/$2/`
+			`/YOUR-CATEGORY-BASE/$1/page/$2/`
 		
 		Put a check next to "Regex"
 		
@@ -81,7 +86,7 @@ Generator" plugins :)
 		Source URL:
 			/consequat/aliquam/
 		Target URL: 
-			/category/consequat/aliquam/
+			/YOUR-CATEGORY-BASE/consequat/aliquam/
 		
 		Don't put a check next to "Regex"
 		
@@ -95,7 +100,7 @@ Generator" plugins :)
 		Source URL:
 			/consequat/aliquam/news/
 		Target URL: 
-			/category/consequat/aliquam/news/
+			/YOUR-CATEGORY-BASE/consequat/aliquam/news/
 		
 		Don't put a check next to "Regex"
 		

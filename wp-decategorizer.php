@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage.
 Author: Bruno "Aesqe" Babic
-Version: 0.2
+Version: 0.2.1
 Author URI: http://skyphe.org
 ////////////////////////////////////////////////////////////////////
     This program is free software: you can redistribute it and/or modify
@@ -26,20 +26,15 @@ Author URI: http://skyphe.org
 ////////////////////////////////////////////////////////////////////
 */
 
-// set 'category_base' option back to defaut value - we don't want 
-// it showing up anywhere anyway
-if( ( $category_base = get_option('category_base') ) != "/category" )
-{
-	update_option('category_base', "/category");
-}
-
 function decategorizer( $output )
 {
-	// search for '/category/' in permalink
-	if(strstr($output, "/category/"))
+	// get 'category_base' value and trim the forward and trailing slashes
+	$category_base = get_option('category_base');
+	$category_base = trim($category_base,"/");
+	
+	if(strstr($output, "/".$category_base."/"))				// search for 'category_base' in permalink
 	{
-		// remove '/category' from the permalink
-		$output = str_replace("/category", "", $output);
+		$output = str_replace("/".$category_base, "", $output);	// remove 'category_base' from the permalink
 	}
 	
 	return $output;
