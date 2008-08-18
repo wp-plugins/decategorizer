@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage.
 Author: Bruno "Aesqe" Babic
-Version: 0.3
+Version: 0.3.0.1
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -117,8 +117,6 @@ function check_redirects()
 	if(empty($regexp_r))
 	{
 		$values = "'','".addslashes($deca_regexp)."',1,'','','','".get_option('decategorizer_group_id')."','enabled','pass',0,'/".$category_base."/$1/page/$2/','url'";
-		
-		echo $values;
 		
 		$insert_regexp = "
 		INSERT INTO ".$redirection_items."(id,url,regex,position,last_count,last_access,group_id,status,action_type,action_code,action_data,match_type) 
