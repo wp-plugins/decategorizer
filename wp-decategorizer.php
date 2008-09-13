@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage.
 Author: Bruno "Aesqe" Babic
-Version: 0.3.0.1
+Version: 0.4
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -33,12 +33,12 @@ Author URI: http://skyphe.org
 // get 'category_base' value and trim the forward and trailing slashes
 $category_base = get_option('category_base');
 
-if($category_base == "")
+if( "" == $category_base )
 {
 	$category_base = "category";
 }
 
-$category_base = trim($category_base,"/");
+$category_base = trim( $category_base, "/" );
 
 
 
@@ -49,47 +49,54 @@ function check_redirects()
 	global $table_prefix, $wpdb, $category_base;
 	
 	/* save the regexp in options table */
-	if(!get_option('decategorizer_regexp'))
+	if( !get_option('decategorizer_regexp') )
 	{
-		add_option('decategorizer_regexp','(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.+)/page/([\d]+)/');
+		add_option('decategorizer_regexp', '(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.+)/page/([\d]+)/');
 	}
 	else
 	{
-		update_option('decategorizer_regexp','(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.+)/page/([\d]+)/');
+		update_option('decategorizer_regexp', '(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.+)/page/([\d]+)/');
 	}
 
 	/*/////////////////////////// create 'Decategorizer' redirection group ///////////////////////////*/
 	
-	$redirection_groups = $table_prefix."redirection_groups";
-	$redirection_items = $table_prefix."redirection_items";
-	$terms = $table_prefix."terms";
-	$term_taxonomy = $table_prefix."term_taxonomy";
-
-	$query_groups = "SELECT name,position FROM ".$redirection_groups;
-	$groups = $wpdb->get_results($query_groups);
+	$redirection_groups = $table_prefix . "redirection_groups";
+	$redirection_items  = $table_prefix . "redirection_items";
+	$terms 				= $table_prefix . "terms";
+	$term_taxonomy 		= $table_prefix . "term_taxonomy";
 	
-	foreach($groups as $group)
+	$table_test = mysql_query("SHOW TABLE STATUS LIKE '" . $redirection_groups. "'") or die(mysql_error());
+	
+	if( 1 != mysql_num_rows($table_test) )
 	{
-		if( strstr($group->name,"Decategorizer") )
+		return false;
+	}
+
+	$query_groups = "SELECT name,position FROM " . $redirection_groups;
+	$groups = $wpdb->get_results( $query_groups );
+	
+	foreach( $groups as $group )
+	{
+		if( strstr($group->name, "Decategorizer") )
 		{
 			$group_exists = "yes";
 		}
 		$position = $group->position;
 	}
 
-	if($group_exists != "yes")
+	if( "yes" != $group_exists )
 	{
-		$values = "'','Decategorizer','1','1','enabled','".($position+1)."'";
-		$insert_group = "INSERT INTO ".$redirection_groups."(id,name,tracking,module_id,status,position) VALUES(".$values.")";
-		$result = mysql_query($insert_group) or die(mysql_error());
+		$values = "'','Decategorizer','1','1','enabled','" . ($position+1) . "'";
+		$insert_group = "INSERT INTO " . $redirection_groups . "(id,name,tracking,module_id,status,position) VALUES(" . $values . ")";
+		$result = mysql_query( $insert_group ) or die( mysql_error() );
 		
-		if($result)
+		if( $result )
 		{
-			$get_deca_id = "SELECT id FROM ".$redirection_groups." WHERE name = 'Decategorizer'";
-			$deca_id = $wpdb->get_results($get_deca_id);
-			$deca_id = $deca_id[0]->id;
+			$get_deca_id = "SELECT id FROM " . $redirection_groups . " WHERE name = 'Decategorizer'";
+			$deca_id 	 = $wpdb->get_results( $get_deca_id );
+			$deca_id 	 = $deca_id[0]->id;
 			
-			if(!get_option("decategorizer_group_id"))
+			if( !get_option("decategorizer_group_id") )
 			{	
 				add_option("decategorizer_group_id", $deca_id);
 			}
@@ -111,65 +118,70 @@ function check_redirects()
 	
 	$deca_regexp = get_option('decategorizer_regexp');
 	
-	$check_if_regexp = "SELECT url FROM ".$redirection_items." WHERE url = '".addslashes($deca_regexp)."'";
-	$regexp_r = $wpdb->get_results($check_if_regexp);
+	$check_if_regexp = "SELECT url FROM " . $redirection_items . " WHERE url = '" . addslashes($deca_regexp) . "'";
+	$regexp_r = $wpdb->get_results( $check_if_regexp );
 
-	if(empty($regexp_r))
+	if( empty( $regexp_r ) )
 	{
-		$values = "'','".addslashes($deca_regexp)."',1,'','','','".get_option('decategorizer_group_id')."','enabled','pass',0,'/".$category_base."/$1/page/$2/','url'";
+		$values = "'','" . addslashes( $deca_regexp ) . "',1,'','','','" . get_option('decategorizer_group_id') . "','enabled','pass',0,'/" . $category_base . "/$1/page/$2/','url'";
 		
 		$insert_regexp = "
-		INSERT INTO ".$redirection_items."(id,url,regex,position,last_count,last_access,group_id,status,action_type,action_code,action_data,match_type) 
-		VALUES(".$values.")";
+		INSERT INTO " . $redirection_items . "(id,url,regex,position,last_count,last_access,group_id,status,action_type,action_code,action_data,match_type) 
+		VALUES(" . $values . ")";
 		
-		$result = mysql_query($insert_regexp) or die(mysql_error());
+		$result = mysql_query( $insert_regexp ) or die( mysql_error() );
 	}	
 	
 	$r = array();
 	
 	/* inspired by wp_list_categories() */
-	$categories = get_categories($r);
-	$output = walk_category_tree($categories, 0, $r);
+	$categories = get_categories( $r );
+	$output = walk_category_tree( $categories, 0, $r );
 
 	/*/////////////////////////// the section below is a bit messy and, like, not optimized at all 8D ///////////////////////////*/
 	/*/////////////////////////// i'll clean it up for next version /////////////////////////////////////////////////////////////*/
 	
-	$output = preg_match_all("%<a href=\"(.*)\" title%",$output,$matches);
+	$output = preg_match_all( "%<a href=\"(.*)\" title%", $output, $matches );
 	$cat_uris = $matches[1];
 	
-	$blog_slash_count = substr_count(get_bloginfo('url'),"/");
+	$blog_slash_count = substr_count( get_bloginfo('url'), "/" );
 	
-	foreach($cat_uris as $key => $value)
+	foreach( $cat_uris as $key => $value )
 	{
-		if( (substr_count($value,"/") - $blog_slash_count) == 2 )
+		if( (substr_count( $value, "/" ) - $blog_slash_count) == 2 )
 		{
-			unset($cat_uris[$key]);
+			unset( $cat_uris[$key] );
 		}
 	}
 	
 	$jk = 0;
 	
-	foreach($cat_uris as $uri)
+	if( empty( $cat_uris ) )
 	{
-		$redirs[$jk]['source'] = str_replace(get_bloginfo('url'),"",$uri);
-		$redirs[$jk]['target'] = "/".$category_base.$redirs[$jk]['source'];
+		return false;
+	}
+	
+	foreach( $cat_uris as $uri )
+	{
+		$redirs[$jk]['source'] = str_replace( get_bloginfo('url'), "", $uri );
+		$redirs[$jk]['target'] = "/" . $category_base . $redirs[$jk]['source'];
 		$jk++;
 	}
 
-	foreach($redirs as $redir)
+	foreach( $redirs as $redir )
 	{
-		$values = "'','".$redir['source']."',0,'','','','".get_option('decategorizer_group_id')."','enabled','pass',0,'".$redir['target']."','url'";
+		$values = "'','" . $redir['source'] . "',0,'','','','" . get_option('decategorizer_group_id') . "','enabled','pass',0,'" . $redir['target'] . "','url'";
 		
-		$test_q = "SELECT * from ".$redirection_items." WHERE url = '".$redir['source']."'";
-		$test_r = $wpdb->get_results($test_q);
+		$test_q = "SELECT * from " . $redirection_items . " WHERE url = '" . $redir['source'] . "'";
+		$test_r = $wpdb->get_results( $test_q );
 
 		if(empty($test_r))
 		{
 			$insert_redirs = "
-			INSERT INTO ".$redirection_items."(id,url,regex,position,last_count,last_access,group_id,status,action_type,action_code,action_data,match_type) 
-			VALUES(".$values.")";
+			INSERT INTO " . $redirection_items . "(id,url,regex,position,last_count,last_access,group_id,status,action_type,action_code,action_data,match_type) 
+			VALUES(" . $values . ")";
 			
-			$result = mysql_query($insert_redirs) or die(mysql_error());
+			$result = mysql_query( $insert_redirs ) or die( mysql_error() );
 		}		
 	}
 }
@@ -181,9 +193,9 @@ function decategorizer( $output )
 {
 	global $category_base;
 	
-	if(strstr($output, "/".$category_base."/"))					// search for 'category_base' in permalinks
+	if( strstr( $output, "/" . $category_base . "/" ) )				// search for 'category_base' in permalinks
 	{
-		$output = str_replace("/".$category_base, "", $output);	// remove 'category_base' from permalinks
+		$output = str_replace( "/" . $category_base, "", $output );	// remove 'category_base' from permalinks
 	}
 	
 	return $output;

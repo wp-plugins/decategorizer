@@ -25,8 +25,14 @@ I recommend using Redirection version 2.x.
 **August 15th, 2008, ~9pm**
 Actually, I'm not even sure if it works with older versions now :|
 Will check tomorrow.
+	- 0.4 update: still had no time to check (orly?) but you really
+	should be using the latest version of Redirection, anyway ;)
 
 **Changelog:**
+
+0.4		- plugin now checks if redirection tables exist (d'oh) before 
+starting to work. It also checks whether adding redirections is 
+actually needed (if you have no child categories, for example).
 
 0.3		- added automatic creation of redirection 
 rules. PLEASE NOTE: Although I've been testing the plugin for the past 
