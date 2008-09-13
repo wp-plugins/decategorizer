@@ -85,6 +85,7 @@ Generator" plugins :)
 	(put '|^/NEW_TYPE/' after '|^/commments/').
 
 	5.1.	Source URL:
+			(without the 'ticks' - ` - that's just for formatting!)
 	
 `(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.+)/page/([\d]+)/`
 		
