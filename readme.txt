@@ -84,17 +84,19 @@ Generator" plugins :)
 	just add it by yourself
 	(put '|^/NEW_TYPE/' after '|^/commments/').
 
-	5.1.	Source URL: 
-			`(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.+)/page/([\d]+)/`
-			
-			Important: if you're using Redirection plugin v 1.x, you 
-			must replace the two + (plus) characters in regexp 
-			with * (star) characters - just use the regexp below:
-			
-			`(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.*)/page/([\d]*)/`
+	5.1.	Source URL:
+	
+`(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.+)/page/([\d]+)/`
+		
+		Important: if you're using Redirection plugin v 1.x, you 
+		must replace the two + (plus) characters in regexp 
+		with * (star) characters - just use the regexp below:
+		
+`(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.*)/page/([\d]*)/`
 			
 		Target URL:
-			`/YOUR-CATEGORY-BASE/$1/page/$2/`
+		
+		/YOUR-CATEGORY-BASE/$1/page/$2/
 		
 		Put a check next to "Regex"
 		
@@ -157,11 +159,16 @@ work? Drop me an e-mail if something's bugging you about this text :)
 
 == Plans for the next version? ==
 
-(added on August 15th 2008 at 9:27PM)
+(modified on September 13th 2008 at 8:38PM)
 
-No idea. Leave a comment here or on my site, or send me 
-an e-mail if you would like to see something added to the plugin.
+Add admin page:
+	-->	add "i'm good (heh)" option: the user can choose whether the 
+		whole plugin runs on every pageload or just the permalink 
+		rewriting function
+	-->	add "cleanup" option: for example, when you change a 
+		category's name => delete redirection for the old category 
+		name from database
 
-Maybe an admin page that holds a single checkbox to enable/disable 
-the 'init' call? It might save a few milliseconds. I'm not kidding :)
+Leave a comment here or on my site, or send me an e-mail if you would 
+like to see something added to the plugin.
 
