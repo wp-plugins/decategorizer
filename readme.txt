@@ -3,7 +3,7 @@ Contributors: aesqe
 Donate link: http://skyphe.org/code/wordpress/decategorizer/
 Tags: category, category base, url, uri, links, permalinks, redirection
 Requires at least: 2.5.0
-Tested up to: 2.6.1
+Tested up to: 2.7-almost-beta
 Stable tag: trunk
 
 This plugin removes 'category_base' from your permalinks. It is meant
@@ -14,25 +14,40 @@ to be used with John Godley's 'Redirection' plugin.
 Basically, it turns your URL's from something like 
 "http://yourdomain/category/news/" to "http://yourdomain/news/". 
 
-It is meant to be used together with 
-[John Godley's 'Redirection'](http://urbangiraffe.com/plugins/redirection/) 
-plugin. If used by itself, you'll just get lots of 
-"Error 404 - Not found" pages.
+It is meant to be used together with John Godley's
+['Redirection'](http://urbangiraffe.com/plugins/redirection/) 
+plugin.
+"Decategorizer" will disable itself if Redirection is not installed.
 
 I recommend using Redirection version 2.x.
-(Tested with version 2.0.4)
-
-**August 15th, 2008, ~9pm**
-Actually, I'm not even sure if it works with older versions now :|
-Will check tomorrow.
-	- 0.4 update: still had no time to check (orly?) but you really
-	should be using the latest version of Redirection, anyway ;)
+(Last tested with version 2.0.9)
 
 **Changelog:**
 
+0.5.2	= october 31st
+Minor code changes
+
+0.5.1	= october 30th 2008
+fixed:
+	static homepage pagination
+	static posts page pagination
+	301 redirection for paginated category/tag archives with slugs including category_base
+
+0.5		= october 26th 2008
+Plugin will now automatically disable itself if "Redirection" is 
+not installed/activated.
+Added notifications on top of the admin screens.
+Added 301 redirection for old permalinks containing /category_base/
+(thanks Utilaje!).
+Added support for permalinks without trailing slash (thanks PH!).
+Redirections are now added when the plugin is activated, and on a 
+few other occasions (see bottom of plugin file for all the hooks).
+Plugin no longer runs on each and every pageload. Hooray :)
+
 0.4		- plugin now checks if redirection tables exist (d'oh) before 
-starting to work. It also checks whether adding redirections is 
-actually needed (if you have no child categories, for example).
+starting to work. <del>It also checks whether adding redirections is 
+actually needed (if you have no child categories, for example).</del>
+-> removed in 0.5 for compatibility reasons ('/%postname%' permalinks).
 
 0.3		- added automatic creation of redirection 
 rules. PLEASE NOTE: Although I've been testing the plugin for the past 
@@ -40,13 +55,13 @@ two hours, do try it at home first.
 REMINDER TO SELF: addslashes(), INSERT, save your sanity...
 
 0.2.1	- instead of setting back category_base to its default value, 
-the current value is used, so one's permalinks don't get broken if they 
-decide to deactivate the plugin. Sorry for that, current users :/
+the current value is used, so one's permalinks don't get broken if 
+they decide to deactivate the plugin. Sorry for that, current users :/
 Please check your 'category_base' value.
 
-0.2		- added the filter to 'category_link' as well. No more "/category/" 
-in links when using "Google XML Sitemaps" and "Dagon Design Sitemap 
-Generator" plugins :)
+0.2		- added the filter to 'category_link' as well. No more 
+"/category/" in links when using "Google XML Sitemaps" and "Dagon 
+Design Sitemap Generator" plugins :)
 
 == Installation == 
 
@@ -58,9 +73,7 @@ Generator" plugins :)
 3.	Install Urban Giraffe's Redirection plugin the same way, 
 	if you haven't already done so.
 4.	Activate 'Redirection' plugin.
-5.	No further setup is required for Decategorizer, but you might 
-	need to set up a few redirection rules in WordPress admin under 
-	Manage->Redirection. 
+5.	You're done. 
 	
 	
 	/**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//
@@ -106,8 +119,8 @@ Generator" plugins :)
 		Method:
 			Pass-through
 
-	5.2.	For each category that has a child category/categories, you 
-		will have to add a new redirection rule/rules. 
+	5.2.	For each category that has a child category/categories, 
+		you will have to add a new redirection rule/rules. 
 		Sorry, it won't work any other way...
 
 		For example: if your parent category is "consequat", and 
@@ -160,16 +173,10 @@ work? Drop me an e-mail if something's bugging you about this text :)
 
 == Plans for the next version? ==
 
-(modified on September 13th 2008 at 8:38PM)
+(modified on October 26th 2008 at 10:32PM)
 
-Add admin page:
-	-->	add "i'm good (heh)" option: the user can choose whether the 
-		whole plugin runs on every pageload or just the permalink 
-		rewriting function
-	-->	add "cleanup" option: for example, when you change a 
-		category's name => delete redirection for the old category 
-		name from database
+Make it a "Redirection" extending class - does that make any sense?
 
-Leave a comment here or on my site, or send me an e-mail if you would 
-like to see something added to the plugin.
+Leave a comment here (Wordpress forums) or on my site, or send me an 
+e-mail if you would like to see something added to the plugin.
 
