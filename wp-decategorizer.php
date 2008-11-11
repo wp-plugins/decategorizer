@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage.
 Author: Bruno "Aesqe" Babic
-Version: 0.5.2
+Version: 0.5.2.1
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -143,12 +143,12 @@ function check_redirects( $the_id="" )
 	if( !get_option('decategorizer_regexp') )
 	{
 		add_option('decategorizer_regexp', '(?!^/[\d]{4}/|^/' . $tag_base . '/|^/author/|^/search/|^/comments/|^/' . $category_base . '/' . $page_for_posts . ')^/(.+)/page/([\d]+)/');
-		$message .= "Regexp added<br />";
+		$cr_message .= "Regexp added<br />";
 	}
 	else
 	{
 		update_option('decategorizer_regexp', '(?!^/[\d]{4}/|^/' . $tag_base . '/|^/author/|^/search/|^/comments/|^/' . $category_base . '/' . $page_for_posts . ')^/(.+)/page/([\d]+)/');
-		$message .= "Regexp updated<br />";
+		$cr_message .= "Regexp updated<br />";
 	}
 
 	// create 'Decategorizer' redirection group
@@ -199,7 +199,7 @@ function check_redirects( $the_id="" )
 	$delete_query = "DELETE FROM " . $redirection_items . " WHERE group_id='" . get_option('decategorizer_group_id') . "'";
 	$delete_items = $wpdb->query($delete_query);
 	
-	$message .= "Previous items deleted<br />";
+	$cr_message .= "Previous items deleted<br />";
 	
 	// add main regexp
 	$values = "'', '" . addslashes( get_option('decategorizer_regexp') ) . "', '1', '', '', '', '" . get_option('decategorizer_group_id') . "','enabled','pass','0','/" . $category_base . "/\$1/page/\$2" . $psts . "','url'";
@@ -211,7 +211,7 @@ function check_redirects( $the_id="" )
 
 	$result = $wpdb->query( $insert_regexp );
 	
-	$message .= "Main regexp added<br />";
+	$cr_message .= "Main regexp added<br />";
 	
 	// add a 301 redirect for old permalinks
 	$values = "'', '" . addslashes( "/" . $category_base . "/(.+)" ) . "', 1, '', '', '', '" . get_option('decategorizer_group_id') . "', 'enabled', 'url', '301', '/\$1', 'url'";
@@ -223,7 +223,7 @@ function check_redirects( $the_id="" )
 
 	$result = $wpdb->query( $insert_301 );
 	
-	$message .= "301s added<br />";
+	$cr_message .= "301s added<br />";
 	
 	/* add category redirections */
 	
@@ -270,7 +270,7 @@ function check_redirects( $the_id="" )
 		$jk++;
 	}
 
-	$message .= "Walker URLs modified<br />";
+	$cr_message .= "Walker URLs modified<br />";
 
 	foreach( $redirs as $redir )
 	{
@@ -283,10 +283,10 @@ function check_redirects( $the_id="" )
 		
 		$result = $wpdb->query( $insert_redirs );	
 		
-		$message .= "Redirection " . current($redir) . " added<br />";
+		$cr_message .= "Redirection " . current($redir) . " added<br />";
 	}
 	
-	//echo '<div class="updated fade"><p>' . $message . '</p></div>';
+	//echo '<div class="updated fade"><p>' . $cr_message . '</p></div>';
 
 	return $the_id;
 }
