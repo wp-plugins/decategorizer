@@ -6,26 +6,31 @@ Requires at least: 2.5.0
 Tested up to: 2.7-almost-beta
 Stable tag: trunk
 
-This plugin removes 'category_base' from your permalinks. It is meant
-to be used with John Godley's 'Redirection' plugin.
+"Decategorizer" removes 'category_base' from your permalinks.
+No special setup or .htaccess editing is required.
 
 == Description == 
 
-Basically, it turns your URL's from something like 
+"Decategorizer" will turn your URL's from something like 
 "http://yourdomain/category/news/" to "http://yourdomain/news/". 
 
 It is meant to be used together with John Godley's
 ['Redirection'](http://urbangiraffe.com/plugins/redirection/) 
-plugin.
-"Decategorizer" will disable itself if Redirection is not installed.
+plugin. "Decategorizer" will disable itself if Redirection is 
+not installed.
 
-I recommend using Redirection version 2.x.
-(Last tested with version 2.0.9)
+Redirection version 2.x. is recommended (Last tested with v2.1.7)
 
 **Changelog:**
 
+0.5.3 = february 10th 2009
+changed category redirections into regexes and added $ (end of string) 
+at the end of expressions to make sure it parses category URLs _only_.
+also tested with wordpress MU 2.7 (and Redirection 2.1.7) and everything 
+seems to work just fine :)
+
 0.5.2	= october 31st
-Minor code changes
+minor code changes
 
 0.5.1	= october 30th 2008
 fixed:
@@ -72,93 +77,10 @@ Design Sitemap Generator" plugins :)
 	yet.
 3.	Install Urban Giraffe's Redirection plugin the same way, 
 	if you haven't already done so.
+4.  Go to Redirection plugin's options page so its database tables
+	can be created.
 4.	Activate 'Redirection' plugin.
-5.	You're done. 
-	
-	
-	/**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//
-	
-	UNLESS SOMETHING WEIRD HAPPENED DURING THE PLUGIN ACTIVATION, 
-	STEPS 5.1 AND 5.2 DESCRIBED BELOW SHOULDN'T BE NECESSARY.
-	I WON'T DELETE THE TEXT, JUST IN CASE SOMETHING WEIRD DID HAPPEN 
-	DURING THE PLUGIN ACTIVATION :)
-	
-	/**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//
-	
-	
-	A note: replace YOUR-CATEGORY-BASE in target URL below with your 
-	category base text. If you're using the default option, 
-	"category", then put that in, instead (without quotes, of course).
-	
-	...and a question: Are TAG, AUTHOR, SEARCH and COMMENTS the only 
-	things besides categories that have pagination? I based this on 
-	the $wp_rewrite->rules output and haven't noticed pagination 
-	anywhere else. Drop me an e-mail if I'm forgetting something, or
-	just add it by yourself
-	(put '|^/NEW_TYPE/' after '|^/commments/').
-
-	5.1.	Source URL:
-			(without the 'ticks' - ` - that's just for formatting!)
-	
-`(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.+)/page/([\d]+)/`
-		
-		Important: if you're using Redirection plugin v 1.x, you 
-		must replace the two + (plus) characters in regexp 
-		with * (star) characters - just use the regexp below:
-		
-`(?!^/[\d]{4}/|^/tag/|^/author/|^/search/|^/comments/)^/(.*)/page/([\d]*)/`
-			
-		Target URL:
-		
-		/YOUR-CATEGORY-BASE/$1/page/$2/
-		
-		Put a check next to "Regex"
-		
-		Type:
-			Simple Redirection 
-		Method:
-			Pass-through
-
-	5.2.	For each category that has a child category/categories, 
-		you will have to add a new redirection rule/rules. 
-		Sorry, it won't work any other way...
-
-		For example: if your parent category is "consequat", and 
-		it has two child categories - "aliquam" and "news" - your 
-		redirection rules will look like this:
-		
-		Source URL:
-			/consequat/aliquam/
-		Target URL: 
-			/YOUR-CATEGORY-BASE/consequat/aliquam/
-		
-		Don't put a check next to "Regex"
-		
-		Type:
-			Simple Redirection 
-		Method:
-			Pass-through
-			
-		---------------------------------------------------
-			
-		Source URL:
-			/consequat/aliquam/news/
-		Target URL: 
-			/YOUR-CATEGORY-BASE/consequat/aliquam/news/
-		
-		Don't put a check next to "Regex"
-		
-		Type:
-			Simple Redirection 
-		Method:
-			Pass-through
-			
-		---------------------------------------------------
-			
-	NOTE: trailing slashes are a must, both in case 1. and 2.
-	
-5.	Now go activate the 'Decategorizer' plugin.
-6.	You're done.
+5.	You're done.
 
 == More info ==
 
@@ -173,10 +95,14 @@ work? Drop me an e-mail if something's bugging you about this text :)
 
 == Plans for the next version? ==
 
-(modified on October 26th 2008 at 10:32PM)
+(modified on February 10th 2009 at 11:36PM)
 
 Make it a "Redirection" extending class - does that make any sense?
+
+Or maybe move from "Redirection" completely and just write the values
+to the .htaccess file?
 
 Leave a comment here (Wordpress forums) or on my site, or send me an 
 e-mail if you would like to see something added to the plugin.
 
+Thanks for reading this :)

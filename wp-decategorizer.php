@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage.
 Author: Bruno "Aesqe" Babic
-Version: 0.5.2.1
+Version: 0.5.3
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -265,7 +265,7 @@ function check_redirects( $the_id="" )
 			$redirs[$jk]['source'] .= "/";
 		}
 		
-		$redirs[$jk]['source'] = str_replace("//", "/", $redirs[$jk]['source']);
+		$redirs[$jk]['source'] = str_replace("//", "/", $redirs[$jk]['source']) . "$";
 		
 		$jk++;
 	}
@@ -274,7 +274,7 @@ function check_redirects( $the_id="" )
 
 	foreach( $redirs as $redir )
 	{
-		$values = "'', '" . $redir['source'] . "', '0', '', '', '', '" . get_option('decategorizer_group_id') . "', 'enabled', 'pass', '0', '" . $redir['target'] . "', 'url'";
+		$values = "'', '" . $redir['source'] . "', '1', '', '', '', '" . get_option('decategorizer_group_id') . "', 'enabled', 'pass', '0', '" . $redir['target'] . "', 'url'";
 		
 		$insert_redirs = "
 		INSERT INTO " . $redirection_items . 
