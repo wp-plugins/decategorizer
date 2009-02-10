@@ -3,7 +3,7 @@ Contributors: aesqe
 Donate link: http://skyphe.org/code/wordpress/decategorizer/
 Tags: category, category base, url, uri, links, permalinks, redirection
 Requires at least: 2.5.0
-Tested up to: 2.7-almost-beta
+Tested up to: 2.7
 Stable tag: trunk
 
 "Decategorizer" removes 'category_base' from your permalinks.
