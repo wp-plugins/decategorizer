@@ -73,14 +73,16 @@ Design Sitemap Generator" plugins :)
 1.	Place the whole 'decategorizer' folder into your wordpress' 
 	installation folder, under 'wp-content\plugins'.
 2.	Go to WordPress administration->plugins page and make sure that 
-	the plugin's name is on the list, but do not activate it just 
-	yet.
+	the plugin's name (Decategorizer) is on the list, but do not 
+	activate it just yet.
 3.	Install Urban Giraffe's Redirection plugin the same way, 
 	if you haven't already done so.
-4.  Go to Redirection plugin's options page so its database tables
-	can be created.
 4.	Activate 'Redirection' plugin.
-5.	You're done.
+5.  If you haven't had Redirection installed and used before now,
+	go to Redirection plugin's options page so its database tables
+	can be created.
+6.	Go back to the plugin management page and activate Decategorizer.
+7.	You're done.
 
 == More info ==
 
