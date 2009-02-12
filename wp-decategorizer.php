@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage.
 Author: Bruno "Aesqe" Babic
-Version: 0.5.3
+Version: 0.5.3.1
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -309,7 +309,7 @@ function decategorizer( $output )
 		$output = str_replace( "/" . $category_base, "", $output . $psts );
 	}
 
-	if( "/" != substr(get_option('permalink_structure'), -1) && "/" != substr($output, -1) && ">" != substr($output, -1) )
+	if( "/" != substr(get_option('permalink_structure'), -1) && "/" != substr($output, -1) && ">" != substr(trim($output), -1) )
 	{
 		$output .= "/";
 	}

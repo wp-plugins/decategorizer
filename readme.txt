@@ -3,7 +3,7 @@ Contributors: aesqe
 Donate link: http://skyphe.org/code/wordpress/decategorizer/
 Tags: category, category base, url, uri, links, permalinks, redirection
 Requires at least: 2.5.0
-Tested up to: 2.7
+Tested up to: 2.7.1
 Stable tag: trunk
 
 "Decategorizer" removes 'category_base' from your permalinks.
@@ -23,22 +23,26 @@ Redirection version 2.x. is recommended (Last tested with v2.1.7)
 
 **Changelog:**
 
-0.5.3 = february 10th 2009
+0.5.3.1	= february 12th 2009 : 
+fixed the randomly appearing slash at the end of category list when 
+using 'wp_list_categories' function to print it
+
+0.5.3 = february 10th 2009 : 
 changed category redirections into regexes and added $ (end of string) 
 at the end of expressions to make sure it parses category URLs _only_.
 also tested with wordpress MU 2.7 (and Redirection 2.1.7) and everything 
 seems to work just fine :)
 
-0.5.2	= october 31st
+0.5.2	= october 31st : 
 minor code changes
 
-0.5.1	= october 30th 2008
+0.5.1	= october 30th 2008 : 
 fixed:
 	static homepage pagination
 	static posts page pagination
 	301 redirection for paginated category/tag archives with slugs including category_base
 
-0.5		= october 26th 2008
+0.5		= october 26th 2008 : 
 Plugin will now automatically disable itself if "Redirection" is 
 not installed/activated.
 Added notifications on top of the admin screens.
