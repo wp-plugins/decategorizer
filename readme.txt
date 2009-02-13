@@ -23,6 +23,14 @@ Redirection version 2.x. is recommended (Last tested with v2.1.7)
 
 **Changelog:**
 
+0.5.3.2 = february 13th 2009 : 
+- changed redirection form from /cat_name/$ to 
+^/(optional subfolder install)/cat_name/$, so if the install is in a 
+subfolder (eg. http://domain.com/wordpress), that subfolder is now 
+included in all redirections, just to make it failsafe.
+- fixed failing home pagination in some cases (/HOME/page/2/) when
+wordpress is installed in a subdirectory.
+
 0.5.3.1	= february 12th 2009 : 
 fixed the randomly appearing slash at the end of category list when 
 using 'wp_list_categories' function to print it

@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage.
 Author: Bruno "Aesqe" Babic
-Version: 0.5.3.1
+Version: 0.5.3.2
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -97,6 +97,15 @@ function check_redirects( $the_id="" )
 {
 	global $redirection, $table_prefix, $wpdb, $message;
 	
+	// returns /FOLDER or /FOLDER/SUBFOLDER, etc.
+	// $server_name = $_SERVER['SERVER_NAME'];
+	$home = get_option('home');
+	$server_name = preg_match("#http://([^/]+)[/]?(.*)#", $home, $matches);
+	$server_name = "http://" . $matches[1];
+	$blog_folder = trim( str_replace($server_name, "", $home) );
+	
+	$cr_message = "Blog folder : " . $blog_folder . "<br />";
+	
 	if ( !empty($redirection) && "redirection" == $redirection->plugin_name )
 	{
 		$redirection_groups = $table_prefix . "redirection_groups";
@@ -139,15 +148,17 @@ function check_redirects( $the_id="" )
 		$page_for_posts = '|^/' . $page->post_name;
 	}
 	
+	$the_regexp = '(?!^' . $blog_folder . '/[\d]{4}/|^' . $blog_folder . '/' . $tag_base . '/|^' . $blog_folder . '/author/|^' . $blog_folder . '/search/|^' . $blog_folder . '/comments/|^' . $blog_folder . '/' . $category_base . '/' . $page_for_posts . '|^' . $blog_folder . '/page/)^' . $blog_folder . '/(.+)/page/([\d]+)/';
+	
 	// save the regexp in options table
 	if( !get_option('decategorizer_regexp') )
 	{
-		add_option('decategorizer_regexp', '(?!^/[\d]{4}/|^/' . $tag_base . '/|^/author/|^/search/|^/comments/|^/' . $category_base . '/' . $page_for_posts . ')^/(.+)/page/([\d]+)/');
+		add_option('decategorizer_regexp', $the_regexp);
 		$cr_message .= "Regexp added<br />";
 	}
 	else
 	{
-		update_option('decategorizer_regexp', '(?!^/[\d]{4}/|^/' . $tag_base . '/|^/author/|^/search/|^/comments/|^/' . $category_base . '/' . $page_for_posts . ')^/(.+)/page/([\d]+)/');
+		update_option('decategorizer_regexp', $the_regexp);
 		$cr_message .= "Regexp updated<br />";
 	}
 
@@ -200,9 +211,9 @@ function check_redirects( $the_id="" )
 	$delete_items = $wpdb->query($delete_query);
 	
 	$cr_message .= "Previous items deleted<br />";
-	
+
 	// add main regexp
-	$values = "'', '" . addslashes( get_option('decategorizer_regexp') ) . "', '1', '', '', '', '" . get_option('decategorizer_group_id') . "','enabled','pass','0','/" . $category_base . "/\$1/page/\$2" . $psts . "','url'";
+	$values = "'', '" . addslashes( get_option('decategorizer_regexp') ) . "', '1', '', '', '', '" . get_option('decategorizer_group_id') . "','enabled','pass','0','" . $blog_folder . "/" . $category_base . "/\$1/page/\$2" . $psts . "','url'";
 	
 	$insert_regexp = "
 	INSERT INTO " . $redirection_items . 
@@ -214,7 +225,7 @@ function check_redirects( $the_id="" )
 	$cr_message .= "Main regexp added<br />";
 	
 	// add a 301 redirect for old permalinks
-	$values = "'', '" . addslashes( "/" . $category_base . "/(.+)" ) . "', 1, '', '', '', '" . get_option('decategorizer_group_id') . "', 'enabled', 'url', '301', '/\$1', 'url'";
+	$values = "'', '" . addslashes( "^" . $blog_folder . "/" . $category_base . "/(.+)" ) . "', 1, '', '', '', '" . get_option('decategorizer_group_id') . "', 'enabled', 'url', '301', '" . $blog_folder . "/\$1', 'url'";
 	
 	$insert_301 = "
 	INSERT INTO " . $redirection_items . 
@@ -265,8 +276,8 @@ function check_redirects( $the_id="" )
 			$redirs[$jk]['source'] .= "/";
 		}
 		
-		$redirs[$jk]['source'] = str_replace("//", "/", $redirs[$jk]['source']) . "$";
-		
+		$redirs[$jk]['source'] = "^" . $blog_folder . str_replace("//", "/", $redirs[$jk]['source']) . "$";
+		$redirs[$jk]['target'] = $blog_folder . $redirs[$jk]['target'];
 		$jk++;
 	}
 
