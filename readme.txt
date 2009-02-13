@@ -19,7 +19,7 @@ It is meant to be used together with John Godley's
 plugin. "Decategorizer" will disable itself if Redirection is 
 not installed.
 
-Redirection version 2.x. is recommended (Last tested with v2.1.7)
+Redirection version 2.x. is recommended (Last tested with v2.1.9)
 
 **Changelog:**
 
