@@ -23,6 +23,13 @@ Redirection version 2.x. is recommended (Last tested with v2.1.9)
 
 **Changelog:**
 
+0.5.4.2 = february 17th 2009 : 
+- added exceptions if is_admin() or is_search()
+
+0.5.4 = february 14th 2009 : 
+- had to change the redirection regexes again, to make it possible 
+for urls like /categorynameone/subcategory/?var=value (thanks T4L!)
+
 0.5.3.2 = february 13th 2009 : 
 - changed redirection form from /cat_name/$ to 
 ^/(optional subfolder install)/cat_name/$, so if the install is in a 

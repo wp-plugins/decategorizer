@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage.
 Author: Bruno "Aesqe" Babic
-Version: 0.5.3.2
+Version: 0.5.4.2
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -127,20 +127,7 @@ function check_redirects( $the_id="" )
 	$tag_base = trim( get_option('tag_base'), "/" );
 	if( "" == $tag_base ){	$tag_base = "tag"; }
 
-	// check if permalinks end with a slash
-	
-	$psts = "";
-	
-	if( "/" == substr(get_option('permalink_structure'), -1) )
-	{
-		$psts = "/";
-	}
-	
-	//$page_for_posts = ""
-	//$page_on_front  = 0;
-	
 	$page_for_posts = get_option('page_for_posts');
-	//$page_on_front  = get_option('page_on_front');
 	
 	if( "" != $page_for_posts )
 	{
@@ -148,7 +135,7 @@ function check_redirects( $the_id="" )
 		$page_for_posts = '|^/' . $page->post_name;
 	}
 	
-	$the_regexp = '(?!^' . $blog_folder . '/[\d]{4}/|^' . $blog_folder . '/' . $tag_base . '/|^' . $blog_folder . '/author/|^' . $blog_folder . '/search/|^' . $blog_folder . '/comments/|^' . $blog_folder . '/' . $category_base . '/' . $page_for_posts . '|^' . $blog_folder . '/page/)^' . $blog_folder . '/(.+)/page/([\d]+)/';
+	$the_regexp = '(?!^' . $blog_folder . '/[\d]{4}/|^' . $blog_folder . '/' . $tag_base . '/|^' . $blog_folder . '/author/|^' . $blog_folder . '/search/|^' . $blog_folder . '/comments/|^' . $blog_folder . '/' . $category_base . '/' . $page_for_posts . '|^' . $blog_folder . '/page/)^' . $blog_folder . '/(.+)/page/([\d]+)([/]?)((\?.*)?)';
 	
 	// save the regexp in options table
 	if( !get_option('decategorizer_regexp') )
@@ -213,7 +200,7 @@ function check_redirects( $the_id="" )
 	$cr_message .= "Previous items deleted<br />";
 
 	// add main regexp
-	$values = "'', '" . addslashes( get_option('decategorizer_regexp') ) . "', '1', '', '', '', '" . get_option('decategorizer_group_id') . "','enabled','pass','0','" . $blog_folder . "/" . $category_base . "/\$1/page/\$2" . $psts . "','url'";
+	$values = "'', '" . addslashes( get_option('decategorizer_regexp') ) . "', '1', '', '', '', '" . get_option('decategorizer_group_id') . "','enabled','pass','0','" . $blog_folder . "/" . $category_base . "/\$1/page/\$2\$3\$4','url'";
 	
 	$insert_regexp = "
 	INSERT INTO " . $redirection_items . 
@@ -256,28 +243,12 @@ function check_redirects( $the_id="" )
 
 	foreach( $cat_uris as $uri )
 	{
-		$redirs[$jk]['source'] = str_replace( get_option('home'), "", $uri );
+		$redirs[$jk]['source'] = rtrim(str_replace( $home, "", $uri ), "/");
 		$redirs[$jk]['target'] = "/" . $category_base . $redirs[$jk]['source'];
 		
-		if( "" == $psts )
-		{
-			$redirs[$jk]['target'] = rtrim($redirs[$jk]['target'], "/");
-		}
-		else
-		{
-			if( "/" != substr($redirs[$jk]['target'], -1) )
-			{
-				$redirs[$jk]['target'] .= "/";
-			}
-		}
+		$redirs[$jk]['source'] = "^" . $blog_folder . str_replace("//", "/", $redirs[$jk]['source']) . "([/]?)((\\\?.+)?)$";
+		$redirs[$jk]['target'] = $blog_folder . $redirs[$jk]['target'] . "$1$2";
 		
-		if( "/" != substr($redirs[$jk]['source'], -1) )
-		{
-			$redirs[$jk]['source'] .= "/";
-		}
-		
-		$redirs[$jk]['source'] = "^" . $blog_folder . str_replace("//", "/", $redirs[$jk]['source']) . "$";
-		$redirs[$jk]['target'] = $blog_folder . $redirs[$jk]['target'];
 		$jk++;
 	}
 
@@ -306,21 +277,16 @@ function check_redirects( $the_id="" )
 function decategorizer( $output )
 {
 	$category_base = trim( get_option('category_base'), "/" );
-	if( "" == $category_base ){	$category_base = "category"; }
 	
-	$psts = "";
-	
-	if( "/" != substr(get_option('permalink_structure'), -1) )
-	{
-		$psts = "/";
-	}
+	if( "" == $category_base )
+		$category_base = "category";
 	
 	if( strstr( $output, "/" . $category_base . "/" ) )
 	{
-		$output = str_replace( "/" . $category_base, "", $output . $psts );
+		$output = str_replace( "/" . $category_base, "", rtrim($output, "/") );
 	}
 
-	if( "/" != substr(get_option('permalink_structure'), -1) && "/" != substr($output, -1) && ">" != substr(trim($output), -1) )
+	if( "/" == substr(get_option('permalink_structure'), -1) && "/" != substr(trim($output), -1) && ">" != substr(trim($output), -1) && !is_admin() && !is_search() )
 	{
 		$output .= "/";
 	}
