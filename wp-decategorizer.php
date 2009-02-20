@@ -6,9 +6,9 @@ Description: Removes "/category/" (category_base text) from your site links.
 It will do you no good by itself - it is meant to be used in conjuction with 
 a plugin by John Godley (Urban Giraffe) called 'Redirection' 
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
-tutorial on the plugin's homepage.
+tutorial on the plugin's homepage or in the plugin's readme.txt file.
 Author: Bruno "Aesqe" Babic
-Version: 0.5.4.2
+Version: 0.5.4.3
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -246,7 +246,7 @@ function check_redirects( $the_id="" )
 		$redirs[$jk]['source'] = rtrim(str_replace( $home, "", $uri ), "/");
 		$redirs[$jk]['target'] = "/" . $category_base . $redirs[$jk]['source'];
 		
-		$redirs[$jk]['source'] = "^" . $blog_folder . str_replace("//", "/", $redirs[$jk]['source']) . "([/]?)((\\\?.+)?)$";
+		$redirs[$jk]['source'] = "^" . $blog_folder . str_replace("//", "/", $redirs[$jk]['source']) . "([/]?|/feed[/]?)((\\\?.+)?)$";
 		$redirs[$jk]['target'] = $blog_folder . $redirs[$jk]['target'] . "$1$2";
 		
 		$jk++;
@@ -263,7 +263,7 @@ function check_redirects( $the_id="" )
 		"(id, url, regex, position, last_count, last_access, group_id, status, action_type, action_code, action_data, match_type) 
 		VALUES(" . $values . ")";
 		
-		$result = $wpdb->query( $insert_redirs );	
+		$result = $wpdb->query( $insert_redirs );
 		
 		$cr_message .= "Redirection " . current($redir) . " added<br />";
 	}

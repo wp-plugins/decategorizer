@@ -1,34 +1,51 @@
 === Decategorizer ===
 Contributors: aesqe
 Donate link: http://skyphe.org/code/wordpress/decategorizer/
-Tags: category, category base, url, uri, links, permalinks, redirection
+Tags: category, remove, category base, category_base, remove category, url, uri, rewrite, links, permalinks, redirection, 301, wp_list_categories, get_pagenum_link, the_category, category_link
 Requires at least: 2.5.0
 Tested up to: 2.7.1
 Stable tag: trunk
 
-"Decategorizer" removes 'category_base' from your permalinks.
-No special setup or .htaccess editing is required.
+"Decategorizer" removes 'category base' from your permalinks.
+Quick setup and no editing required. 301 redirections are added 
+automatically.
 
 == Description == 
 
-"Decategorizer" will turn your URL's from something like 
+"Decategorizer" will remove the category base from your category 
+links, and turn your URLs from something like 
 "http://yourdomain/category/news/" to "http://yourdomain/news/". 
 
-It is meant to be used together with John Godley's
-['Redirection'](http://urbangiraffe.com/plugins/redirection/) 
-plugin. "Decategorizer" will disable itself if Redirection is 
-not installed.
+**Features:**
 
+301 redirection for old category links added automatically;  
+works with most permalink structures (please e-mail me or leave 
+a comment on plugin's site if it doesn't work for you); 
+you can safely use variables in your category URLs 
+(http://yourdomain/news/?var=val); 
+sitemap plugins compatible; 
+it works with multiple subcategory links 
+(http://yourdomain/categoryname/subcategoryname/subsubcategoryname/)
+
+"Decategorizer" needs John Godley's
+['Redirection'](http://urbangiraffe.com/plugins/redirection/) 
+plugin to work and it will disable itself if Redirection is 
+not installed.
 Redirection version 2.x. is recommended (Last tested with v2.1.9)
 
 **Changelog:**
+
+0.5.4.3 = february 20th 2009 : 
+- fixed the failing feed redirections for some permalink structures
+(thanks Ray!)
+- better description and tags in readme for Sphinx :)
 
 0.5.4.2 = february 17th 2009 : 
 - added exceptions if is_admin() or is_search()
 
 0.5.4 = february 14th 2009 : 
 - had to change the redirection regexes again, to make it possible 
-for urls like /categorynameone/subcategory/?var=value (thanks T4L!)
+for urls like /categoryname/subcategoryname/?var=value (thanks T4L!)
 
 0.5.3.2 = february 13th 2009 : 
 - changed redirection form from /cat_name/$ to 
