@@ -120,6 +120,13 @@ Design Sitemap Generator" plugins :)
 6.	Go back to the plugin management page and activate Decategorizer.
 7.	You're done.
 
+**IMPORTANT**
+
+When upgrading to the newest version, please deactivate and then 
+reactivate the plugin _after the upgrade_ so you can be sure that 
+redirections are recreated. It's a bit wonky, I know, I'll try to 
+fix it soon :/
+
 == More info ==
 
 To see the end result before you decide to install, please 
