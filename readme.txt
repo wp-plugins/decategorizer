@@ -2,7 +2,7 @@
 Contributors: aesqe
 Donate link: http://skyphe.org/code/wordpress/decategorizer/
 Tags: category, remove, category base, category_base, remove category, url, uri, rewrite, links, permalinks, redirection, 301, wp_list_categories, get_pagenum_link, the_category, category_link
-Requires at least: 2.5.0
+Requires at least: 2.8
 Tested up to: 2.7.1
 Stable tag: trunk
 
