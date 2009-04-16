@@ -3,7 +3,7 @@ Contributors: aesqe
 Donate link: http://skyphe.org/code/wordpress/decategorizer/
 Tags: category, remove, category base, category_base, remove category, url, uri, rewrite, links, permalinks, redirection, 301, wp_list_categories, get_pagenum_link, the_category, category_link
 Requires at least: 2.5.0
-Tested up to: 2.7.1
+Tested up to: 2.8
 Stable tag: trunk
 
 "Decategorizer" removes 'category base' from your permalinks.
@@ -119,13 +119,6 @@ Design Sitemap Generator" plugins :)
 	can be created.
 6.	Go back to the plugin management page and activate Decategorizer.
 7.	You're done.
-
-**IMPORTANT**
-
-When upgrading to the newest version, please deactivate and then 
-reactivate the plugin _after the upgrade_ so you can be sure that 
-redirections are recreated. It's a bit wonky, I know, I'll try to 
-fix it soon :/
 
 == More info ==
 
