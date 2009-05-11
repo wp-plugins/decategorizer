@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage or in the plugin's readme.txt file.
 Author: Bruno "Aesqe" Babic
-Version: 0.5.4.3
+Version: 0.6
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -32,20 +32,14 @@ Author URI: http://skyphe.org
 
 /* borrowed some plugin checking code from "Dashboard Fixer" by http://www.viper007bond.com in the first two functions below :) */
 
-// print notices on top of admin pages
-function redirection_installed_check()
-{
-	add_action( 'admin_notices', 'ri_checker' );
-}
-
 // check if Redirection is installed
-function ri_checker()
+function decategorizer_ri_checker()
 {
-	global $table_prefix, $wp_version, $redirection, $wpdb;
+	global $wp_version, $redirection, $wpdb, $redirection_groups, $table_prefix;
 	
 	$message = '';
-	
 	$wp_version = substr($wp_version, 0, 3);
+	$redirection_groups = $table_prefix . "redirection_groups";
 
 	if ( 2.5 > (float)$wp_version )
 	{
@@ -56,8 +50,6 @@ function ri_checker()
 	{
 		if ( !empty($redirection) && "redirection" == $redirection->plugin_name )
 		{
-			$redirection_groups = $table_prefix . "redirection_groups";
-			
 			if( $wpdb->get_var("SHOW TABLES LIKE '" . $redirection_groups . "'") != $redirection_groups )
 			{
 				$wpde_error = true;
@@ -88,57 +80,81 @@ function ri_checker()
 		
 		deactivate_plugins(plugin_basename(__FILE__));
 	}
-	
+
 	echo $message;
 }
 
 // check if redirections exist; add them if they do not
-function check_redirects( $the_id="" )
+function decategorizer_check_redirects()
 {
-	global $redirection, $table_prefix, $wpdb, $message;
+	global $redirection, $wpdb, $table_prefix, $wp_rewrite, $wp_object_cache;
+
+	$arg_one = func_get_arg(0);
 	
-	// returns /FOLDER or /FOLDER/SUBFOLDER, etc.
-	// $server_name = $_SERVER['SERVER_NAME'];
-	$home = get_option('home');
-	$server_name = preg_match("#http://([^/]+)[/]?(.*)#", $home, $matches);
-	$server_name = "http://" . $matches[1];
-	$blog_folder = trim( str_replace($server_name, "", $home) );
+	if( 1 < func_num_args() )
+	{
+		$arg_two = func_get_arg(1);
+		
+		// permalink changed to default
+		if( false !== strpos($arg_one, "%") && ("" == $arg_two || false === $arg_two || null === $arg_two) )
+		{
+			$delete_items = $wpdb->query("DELETE FROM " . $table_prefix . "redirection_items" . " WHERE `group_id`='" . get_option('decategorizer_group_id') . "'");
+			return;
+		}
+		else
+		{
+			$wp_rewrite->permalink_structure = $arg_two;
+		}
+	}
 	
-	$cr_message = "Blog folder : " . $blog_folder . "<br />";
+	$redirection_groups = $table_prefix . "redirection_groups";
+	$redirection_items  = $table_prefix . "redirection_items";
 	
 	if ( !empty($redirection) && "redirection" == $redirection->plugin_name )
-	{
-		$redirection_groups = $table_prefix . "redirection_groups";
-		
+	{		
 		if( $wpdb->get_var("SHOW TABLES LIKE '" . $redirection_groups . "'") != $redirection_groups )
-		{
 			return false;
-		}
 	}
 	else
 	{
 		return false;
 	}
+	
+	$pl = preg_match("#([^%]*)%(.*)#", get_option("permalink_structure"), $permalink_lead);
+
+	if( "/" != $permalink_lead[1] )
+		$permalink_lead = "/" . trim($permalink_lead[1], "/");
+	else
+		$permalink_lead = "";
+	
+	// get blog subfolder
+	// returns empty string or /FOLDER or /FOLDER/SUBFOLDER, etc.
+	$server_name = preg_match("#http://([^/]+)[/]?(.*)#", get_bloginfo('url'), $matches);	
+	$blog_folder = trim( str_replace("http://" . $matches[1], "", get_bloginfo('url')) );
+	
+	$cr_message = "Blog folder : " . $blog_folder . "<br />";
 
 	// get category_base and tag_base values
-	$category_base = trim( get_option('category_base'), "/" );
-	if( "" == $category_base ){	$category_base = "category"; }
-	
-	$tag_base = trim( get_option('tag_base'), "/" );
-	if( "" == $tag_base ){	$tag_base = "tag"; }
-
+	$category_base 	= trim( get_option('category_base'), "/" );
+	$tag_base 		= trim( get_option('tag_base'), "/" );
 	$page_for_posts = get_option('page_for_posts');
 	
+	if( "" == $category_base )
+		$category_base = "category";
+	
+	if( "" == $tag_base )
+		$tag_base = "tags";
+
 	if( "" != $page_for_posts )
 	{
-		$page = get_page($page_id);
-		$page_for_posts = '|^/' . $page->post_name;
+		$page = get_page(intval($page_for_posts));
+		$page_for_posts = '|^/' . $page->post_name . '/';
 	}
 	
-	$the_regexp = '(?!^' . $blog_folder . '/[\d]{4}/|^' . $blog_folder . '/' . $tag_base . '/|^' . $blog_folder . '/author/|^' . $blog_folder . '/search/|^' . $blog_folder . '/comments/|^' . $blog_folder . '/' . $category_base . '/' . $page_for_posts . '|^' . $blog_folder . '/page/)^' . $blog_folder . '/(.+)/page/([\d]+)([/]?)((\?.*)?)';
+	$the_regexp = '(?!^' . $blog_folder . $permalink_lead . '/[\d]{4}/|^' . $blog_folder . '/' . $tag_base . '/|^' . $blog_folder . $permalink_lead . '/author/|^' . $blog_folder . '/search/|^' . $blog_folder . '/comments/|^' . $blog_folder . '/' . $category_base . '/' . $page_for_posts . '|^' . $blog_folder . '/page/)^' . $blog_folder . '/(.+)/page/([\d]+)([/]?)((\?.*)?)';
 	
 	// save the regexp in options table
-	if( !get_option('decategorizer_regexp') )
+	if( false === get_option('decategorizer_regexp') )
 	{
 		add_option('decategorizer_regexp', $the_regexp);
 		$cr_message .= "Regexp added<br />";
@@ -150,54 +166,55 @@ function check_redirects( $the_id="" )
 	}
 
 	// create 'Decategorizer' redirection group
-	$redirection_groups = $table_prefix . "redirection_groups";
-	$redirection_items  = $table_prefix . "redirection_items";
-	$terms 				= $table_prefix . "terms";
-	$term_taxonomy 		= $table_prefix . "term_taxonomy";
-
-	$query_groups = "SELECT name,position FROM " . $redirection_groups;
-	$groups = $wpdb->get_results( $query_groups );
+	$groups = $wpdb->get_results( "SELECT `name`, `position` FROM " . $redirection_groups . " ORDER BY `position` ASC ");
 
 	foreach( $groups as $group )
 	{
-		if( strstr($group->name, "Decategorizer") )
-		{
+		if( "Decategorizer" == $group->name )
 			$group_exists = true;
-		}
-		$position = $group->position;
+
+		$position = intval($group->position) + 1;
 	}
 
 	if( true !== $group_exists )
 	{
-		$values = "'', 'Decategorizer', '1', '1', 'enabled', '" . ( $position + 1 ) . "'";
-		$insert_group = "INSERT INTO " . $redirection_groups . "(id, name, tracking, module_id, status, position) VALUES(" . $values . ")";
-		$result = $wpdb->query( $insert_group );
+		$values = "'', 'Decategorizer', '1', '1', 'enabled', '" . $position . "'";
+		$result = $wpdb->query( "INSERT INTO " . $redirection_groups . " (id, name, tracking, module_id, status, position) VALUES(" . $values . ")" );
 		
 		if( $result )
 		{
-			$get_deca_id = "SELECT id FROM " . $redirection_groups . " WHERE name='Decategorizer'";
-			$deca_id 	 = $wpdb->get_results( $get_deca_id );
-			$deca_id 	 = $deca_id[0]->id;
+			$deca_id = $wpdb->get_var( "SELECT `id` FROM " . $redirection_groups . " WHERE name='Decategorizer'" );
 
-			if( !get_option("decategorizer_group_id") )
+			if( false === get_option("decategorizer_group_id") )
 			{	
 				add_option("decategorizer_group_id", $deca_id);
-				$message .= "Group ID added<br />";
+				$cr_message .= "Group ID added<br />";
 			}
 			else
 			{
 				update_option("decategorizer_group_id", $deca_id);
-				$message .= "Group ID updated<br />";
+				$cr_message .= "Group ID updated<br />";
 			}
 		}
 	}
 
 	/*/////////////////////////// create redirections ///////////////////////////*/
 	
-	$delete_query = "DELETE FROM " . $redirection_items . " WHERE group_id='" . get_option('decategorizer_group_id') . "'";
+	$delete_query = "DELETE FROM " . $redirection_items . " WHERE `group_id`='" . get_option('decategorizer_group_id') . "'";
 	$delete_items = $wpdb->query($delete_query);
 	
 	$cr_message .= "Previous items deleted<br />";
+	
+	// inspired by wp_list_categories()
+	$r = array( "hide_empty" => false );
+	$output = walk_category_tree( get_categories($r), 0, $r );
+
+	$output = preg_match_all( "#<a href=[\"'](.*)[\"']\s+title#", $output, $matches );
+	$cat_uris = $matches[1];
+
+	// end if there are no populated subcategories
+	if( empty( $cat_uris ) || false !== strpos($cat_uris[0], "?cat=") )
+		return false;
 
 	// add main regexp
 	$values = "'', '" . addslashes( get_option('decategorizer_regexp') ) . "', '1', '', '', '', '" . get_option('decategorizer_group_id') . "','enabled','pass','0','" . $blog_folder . "/" . $category_base . "/\$1/page/\$2\$3\$4','url'";
@@ -225,26 +242,15 @@ function check_redirects( $the_id="" )
 	
 	/* add category redirections */
 	
-	// inspired by wp_list_categories()
-	$r = array();
-	$categories = get_categories( $r );
-	$output = walk_category_tree( $categories, 0, $r );
-
-	$output = preg_match_all( "#<a href=\"(.*)\" title#", $output, $matches );
-	$cat_uris = $matches[1];
-
-	// end if there are no populated subcategories
-	if( empty( $cat_uris ) )
-	{
-		return false;
-	}
-	
 	$jk = 0;
 
 	foreach( $cat_uris as $uri )
 	{
-		$redirs[$jk]['source'] = rtrim(str_replace( $home, "", $uri ), "/");
-		$redirs[$jk]['target'] = "/" . $category_base . $redirs[$jk]['source'];
+		$redirs[$jk]['source'] = rtrim(str_replace( get_bloginfo('url'), "", $uri ), "/");
+		$redirs[$jk]['target'] = $redirs[$jk]['source'];
+		
+		if( false !== strpos( $redirs[$jk]['source'], "/" . $category_base . "/" ) )
+			$redirs[$jk]['source'] = str_replace( "/" . $category_base, "", rtrim($redirs[$jk]['source'], "/") );
 		
 		$redirs[$jk]['source'] = "^" . $blog_folder . str_replace("//", "/", $redirs[$jk]['source']) . "([/]?|/feed[/]?)((\\\?.+)?)$";
 		$redirs[$jk]['target'] = $blog_folder . $redirs[$jk]['target'] . "$1$2";
@@ -269,45 +275,79 @@ function check_redirects( $the_id="" )
 	}
 	
 	//echo '<div class="updated fade"><p>' . $cr_message . '</p></div>';
+	
+	return $arg_one;
+}
 
-	return $the_id;
+function decategorizer_deactivate()
+{
+	global $table_prefix, $wpdb;
+	
+	delete_option("decategorizer_regexp");
+	delete_option("decategorizer_group_id");
+
+	$delete_items = $wpdb->query("DELETE FROM " . $table_prefix . "redirection_items" . " WHERE `group_id`='" . get_option('decategorizer_group_id') . "'");
 }
 
 // the 'easy' part :)
 function decategorizer( $output )
 {
-	$category_base = trim( get_option('category_base'), "/" );
+	$check_for_extension = preg_match("#^.*(\.+[^/]*)$#", get_option('permalink_structure'), $em);
+	$permalink_extension = $em[1];
 	
-	if( "" == $category_base )
-		$category_base = "category";
+	if( !is_admin() )
+	{
+		if( "" == get_option('permalink_structure') )
+			return false;
+		
+		$category_base = trim( get_option('category_base'), "/" );
+		
+		if( "" == $category_base )
+			$category_base = "category";
+		
+		if( false !== strpos( $output, "/" . $category_base . "/" ) )
+			$output = str_replace( "/" . $category_base, "", rtrim($output, "/") );
 	
-	if( strstr( $output, "/" . $category_base . "/" ) )
-	{
-		$output = str_replace( "/" . $category_base, "", rtrim($output, "/") );
-	}
-
-	if( "/" == substr(get_option('permalink_structure'), -1) && "/" != substr(trim($output), -1) && ">" != substr(trim($output), -1) && !is_admin() && !is_search() )
-	{
-		$output .= "/";
+		if( 
+		   ( "/" == substr(get_option('permalink_structure'), -1) || "" != $permalink_extension ) && 
+		   "/" != substr(trim($output), -1) && 
+			">" != substr(trim($output), -1) && 
+			!is_search()
+		  )
+		{
+			$output .= "/";
+		}
 	}
 	
 	return $output;
 }
 
-// hooks
-register_activation_hook(__FILE__, 'redirection_installed_check');
-register_activation_hook(__FILE__, 'check_redirects');
+/* hooks */
 
-add_action('admin_head', 'redirection_installed_check');
-add_action('update_option_permalink_structure', 'check_redirects');
-add_action('update_option_category_base', 'check_redirects');
-add_action('update_option_tag_base', 'check_redirects');
-add_action('update_option_home', 'check_redirects');
+// print notices on top of admin pages
+function decategorizer_redirection_installed_check()
+{
+	add_action( 'admin_notices', 'decategorizer_ri_checker' );
+}
 
-add_action('edit_category', 		'check_redirects');
-add_action('delete_category', 		'check_redirects');
-add_action('wp_insert_post', 		'check_redirects');
-add_action('delete_post', 			'check_redirects');
+// deactivation
+add_action('deactivate_' . basename(dirname( __FILE__ )) . '/' . basename(__FILE__), 'decategorizer_deactivate');
+
+// activation
+register_activation_hook(__FILE__, 'decategorizer_redirection_installed_check');
+register_activation_hook(__FILE__, 'decategorizer_check_redirects');
+
+//...
+add_action('admin_head', 'decategorizer_redirection_installed_check');
+
+add_action('update_option_permalink_structure', 'decategorizer_check_redirects', 10, 2);
+add_action('update_option_category_base', 		'decategorizer_check_redirects', 10, 2);
+add_action('update_option_tag_base', 			'decategorizer_check_redirects', 10, 2);
+add_action('update_option_home', 				'decategorizer_check_redirects', 10, 2);
+
+add_action('create_category', 		'decategorizer_check_redirects');
+add_action('edit_category', 		'decategorizer_check_redirects');
+add_action('delete_category', 		'decategorizer_check_redirects');
 
 add_filter('category_link', 		'decategorizer', 100, 1);
 add_filter('get_pagenum_link', 		'decategorizer', 100, 1);

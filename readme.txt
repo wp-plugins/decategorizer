@@ -1,8 +1,8 @@
 === Decategorizer ===
 Contributors: aesqe
-Donate link: http://skyphe.org/code/wordpress/decategorizer/
+Donate link: http://www.amazon.com/gp/registry/wishlist/1IU6F22QPQX2Y/
 Tags: category, remove, category base, category_base, remove category, url, uri, rewrite, links, permalinks, redirection, 301, wp_list_categories, get_pagenum_link, the_category, category_link
-Requires at least: 2.5.0
+Requires at least: 2.5
 Tested up to: 2.8
 Stable tag: trunk
 
@@ -13,7 +13,7 @@ automatically.
 == Description == 
 
 "Decategorizer" will remove the category base from your category 
-links, and turn your URLs from something like 
+links, and turn your category URLs from something like 
 "http://yourdomain/category/news/" to "http://yourdomain/news/". 
 
 **Features:**
@@ -34,6 +34,17 @@ not installed.
 Redirection version 2.x. is recommended (Last tested with v2.1.9)
 
 **Changelog:**
+
+0.6 = may 11th 2009 :
+- fixed a bunch of bugs
+- plugin now correctly updates the redirections when permalink 
+structure is updated, or deletes them when structure is empty
+- plugin now deletes the data it has created when it is deactivated
+- added support for custom strings in permalink structures, 
+for example /articles/%postname%.html (thanks Dominic!).
+i'll be releasing another update soon - you'll be able to 
+choose whether you want the trailing slash or not in your 
+permalinks, and also some other yum things.
 
 0.5.4.3 = february 20th 2009 : 
 - fixed the failing feed redirections for some permalink structures
@@ -136,6 +147,7 @@ work? Drop me an e-mail if something's bugging you about this text :)
 (modified on February 10th 2009 at 11:36PM)
 
 Make it a "Redirection" extending class - does that make any sense?
+Probably.
 
 Or maybe move from "Redirection" completely and just write the values
 to the .htaccess file?
