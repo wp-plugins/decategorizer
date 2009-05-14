@@ -35,6 +35,13 @@ Redirection version 2.x. is recommended (Last tested with v2.1.9)
 
 **Changelog:**
 
+0.6.2 = may 14th 2009 :
+- i _might_ have broken a few sites with that 0.6 version, so i'll 
+just apologize preemptively - sorry! :|
+- version 0.6.2 is what version 0.6 was supposed to be
+- big thanks goes to westi for explaining the event sequence of 
+"update_option_permalink_structure" hook
+
 0.6 = may 11th 2009 :
 - fixed a bunch of bugs
 - plugin now correctly updates the redirections when permalink 
