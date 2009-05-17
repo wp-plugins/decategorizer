@@ -35,7 +35,11 @@ Redirection version 2.x. is recommended (Last tested with v2.1.9)
 
 **Changelog:**
 
-0.6.2.3
+0.6.3 = may 17th 2009 :
+- fixed a bug with 301 redirections not respecting the user added 
+text string at the beginning of permalink structure
+
+0.6.2.3 = may 17th 2009 :
 - minor code corrections
 - informational messages are no longer echoed, but saved to a log file 
 to prevent headers already sent errors on add/edit post/category

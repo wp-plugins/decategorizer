@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage or in the plugin's readme.txt file.
 Author: Bruno "Aesqe" Babic
-Version: 0.6.2.3
+Version: 0.6.3
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ function decategorizer_check_redirects()
 {
 	global $redirection, $wpdb, $table_prefix, $wp_rewrite, $wp_version, $pagenow;
 	
-	$arg_one = @func_get_arg(0);
+	$arg_one = func_get_arg(0);
 	
 	$debug = false;
 	
@@ -275,9 +275,8 @@ function decategorizer_check_redirects()
 	$delete_items = $wpdb->query( "DELETE FROM " . $redirection_items . " WHERE `group_id`='" . get_option('decategorizer_group_id') . "'" );
 	$cr_message .= "Previous items deleted<br />";
 
-	// inspired by wp_list_categories()
-	// gets us a html list of all categories
-	$deca_cat_list = get_categories( array("hide_empty" => false) );
+	// get a list of category permalinks
+	$deca_cat_list = get_categories( array() );
 	
 	foreach( $deca_cat_list as $dcat )
 	{
@@ -299,6 +298,9 @@ function decategorizer_check_redirects()
 	$cr_message .= "Main regexp added to DB<br />";
 	
 	// add a 301 redirect for old permalinks
+	if( "" != get_option("category_base") )
+		$permalink_lead = "";
+	
 	$values = "'', '" . addslashes( "^" . $blog_folder . "/" . $category_base . "/(.+)" ) . "', 1, '', '', '', '" . get_option('decategorizer_group_id') . "', 'enabled', 'url', '301', '" . $blog_folder . $permalink_lead . "/\$1', 'url'";
 
 	$result = $wpdb->query( "INSERT INTO " . $redirection_items . " 
@@ -308,7 +310,6 @@ function decategorizer_check_redirects()
 	$cr_message .= "301s added<br />";
 	
 	// add category redirections
-	
 	$jk = 0;
 
 	foreach( $cat_uris as $uri )
@@ -415,7 +416,7 @@ function decategorizer_log( $data )
 	{		
 		@fwrite($file, $data);
 		
-		if( 102400 < (@filesize($filename) + strlen($data)) )
+		if( 102400 < (filesize($filename) + strlen($data)) )
 			@ftruncate($file, 102400);
 	}
 	
@@ -440,16 +441,19 @@ register_activation_hook(__FILE__, 'decategorizer_check_redirects');
 //...
 add_action('admin_head', 'decategorizer_redirection_installed_check');
 
-add_action('update_option_permalink_structure', 'decategorizer_check_redirects', 100, 2);
+if( 2.8 > (float)substr($wp_version, 0, 3) )
+	add_action('update_option_permalink_structure', 'decategorizer_check_redirects', 100, 2);
+else
+	add_action('permalink_structure_changed', 		'decategorizer_check_redirects', 100, 2);
+
 add_action('update_option_category_base', 		'decategorizer_check_redirects', 100, 2);
 add_action('update_option_tag_base', 			'decategorizer_check_redirects', 100, 2);
 add_action('update_option_home', 				'decategorizer_check_redirects', 100, 2);
-add_action('permalink_structure_changed', 		'decategorizer_check_redirects', 100, 2);
 
 add_action('edit_category', 		'decategorizer_check_redirects');
 add_action('delete_category', 		'decategorizer_check_redirects');
-add_action('wp_insert_post', 		'check_redirects');
-add_action('delete_post', 			'check_redirects');
+add_action('wp_insert_post', 		'decategorizer_check_redirects');
+add_action('delete_post', 			'decategorizer_check_redirects');
 
 add_filter('category_link', 		'decategorizer', 100, 1);
 add_filter('get_pagenum_link', 		'decategorizer', 100, 1);
