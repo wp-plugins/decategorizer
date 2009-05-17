@@ -31,7 +31,7 @@ it works with multiple subcategory links
 ['Redirection'](http://urbangiraffe.com/plugins/redirection/) 
 plugin to work and it will disable itself if Redirection is 
 not installed.
-Redirection version 2.x. is recommended (Last tested with v2.1.9)
+Redirection version 2.x. is recommended (Last tested with v2.1.14)
 
 **Changelog:**
 
