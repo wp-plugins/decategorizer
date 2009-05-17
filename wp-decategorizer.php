@@ -406,20 +406,20 @@ function decategorizer_log( $data )
 	$data = date("Y-m-d@H:i:s") . "\n" . str_replace("<br />", "\n", $data) . "\n";
 	$filename = str_replace("\\", "/", WP_PLUGIN_DIR) . "/" . basename(dirname( __FILE__ )) . "/decategorizer_log.txt";
 	
-	if( file_exists($filename) )
-		$data .= implode("", file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) . "\n";
+	if( @file_exists($filename) )
+		$data .= @implode("", @file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) . "\n";
 	
-	$file = fopen($filename, "w+t");
+	$file = @fopen($filename, "w+t");
 
 	if( false !== $file )
 	{		
-		fwrite($file, $data);
+		@fwrite($file, $data);
 		
-		if( 102400 < (filesize($filename) + strlen($data)) )
-			ftruncate($file, 102400);
+		if( 102400 < (@filesize($filename) + strlen($data)) )
+			@ftruncate($file, 102400);
 	}
 	
-	fclose($file);
+	@fclose($file);
 }
 
 /* hooks */
