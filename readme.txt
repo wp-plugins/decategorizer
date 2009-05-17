@@ -35,6 +35,11 @@ Redirection version 2.x. is recommended (Last tested with v2.1.9)
 
 **Changelog:**
 
+0.6.2.3
+- minor code corrections
+- informational messages are no longer echoed, but saved to a log file 
+to prevent headers already sent errors on add/edit post/category
+
 0.6.2 = may 14th 2009 :
 - i _might_ have broken a few sites with that 0.6 version, so i'll 
 just apologize preemptively - sorry! :|

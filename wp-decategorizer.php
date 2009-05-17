@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage or in the plugin's readme.txt file.
 Author: Bruno "Aesqe" Babic
-Version: 0.6.2
+Version: 0.6.2.3
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -30,12 +30,22 @@ Author URI: http://skyphe.org
 
 */
 
+// set up the constants
+if ( !defined( 'WP_CONTENT_URL' ) )
+	define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
+if ( !defined( 'WP_CONTENT_DIR' ) )
+	define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
+if ( !defined( 'WP_PLUGIN_URL' ) )
+	define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
+if ( !defined( 'WP_PLUGIN_DIR' ) )
+	define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
+
 /* borrowed some plugin checking code from "Dashboard Fixer" by http://www.viper007bond.com in the first two functions below :) */
 
 // check if Redirection is installed
 function decategorizer_ri_checker()
 {
-	global $wp_version, $redirection, $wpdb, $redirection_groups, $table_prefix;
+	global $wp_version, $redirection, $wpdb, $table_prefix;
 	
 	$message = '';
 	$redirection_groups = $table_prefix . "redirection_groups";
@@ -74,7 +84,7 @@ function decategorizer_ri_checker()
 	if ( false !== $wpde_error )
 	{
 		$message .= '"Decategorizer" has been automatically <strong>deactivated</strong>.<br />';
-		$message = '<div class="updated fade"><p>' . $message . '</p></div>';
+		$message  = '<div class="updated fade"><p>' . $message . '</p></div>';
 		
 		deactivate_plugins(plugin_basename(__FILE__));
 	}
@@ -85,7 +95,9 @@ function decategorizer_ri_checker()
 // check if redirections exist; add them if they do not
 function decategorizer_check_redirects()
 {
-	global $redirection, $wpdb, $table_prefix, $wp_rewrite, $wp_object_cache, $wp_version;
+	global $redirection, $wpdb, $table_prefix, $wp_rewrite, $wp_version, $pagenow;
+	
+	$arg_one = @func_get_arg(0);
 	
 	$debug = false;
 	
@@ -101,11 +113,11 @@ function decategorizer_check_redirects()
 	if ( !empty($redirection) && "redirection" == $redirection->plugin_name )
 	{		
 		if( $wpdb->get_var("SHOW TABLES LIKE '" . $redirection_groups . "'") != $redirection_groups )
-			return false;
+			return $arg_one;
 	}
 	else
 	{
-		return false;
+		return $arg_one;
 	}
 	
 	// create 'Decategorizer' redirection group if it does not exist already
@@ -133,12 +145,12 @@ function decategorizer_check_redirects()
 			if( false === get_option("decategorizer_group_id") )
 			{	
 				add_option("decategorizer_group_id", $deca_id);
-				$cr_message .= "Group created, ID added<br />";
+				$cr_message .= "Group created, ID option added<br />";
 			}
 			else
 			{
 				update_option("decategorizer_group_id", $deca_id);
-				$cr_message .= "Group created, ID updated<br />";
+				$cr_message .= "Group created, ID option updated<br />";
 			}
 		}
 	}
@@ -149,20 +161,19 @@ function decategorizer_check_redirects()
 		if( false === get_option("decategorizer_group_id") )
 		{	
 			add_option("decategorizer_group_id", $deca_id);
-			$cr_message .= "Group ID added<br />";
+			$cr_message .= "Group ID option added<br />";
 		}
 		else
 		{
 			update_option("decategorizer_group_id", $deca_id);
-			$cr_message .= "Group ID updated<br />";
+			$cr_message .= "Group ID option updated<br />";
 		}
 		
 		$cr_message .= "Group exists (id: " . get_option("decategorizer_group_id") . ")<br />";
 	}
 
 	// handle function arguments
-	$arg_one = func_get_arg(0);
-	
+
 	if( 1 < func_num_args() )
 	{
 		$arg_two = func_get_arg(1);
@@ -171,21 +182,15 @@ function decategorizer_check_redirects()
 		if( false !== strpos($arg_one, "%") && ("" == $arg_two || false === $arg_two || null === $arg_two) )
 		{
 			$delete_items = $wpdb->query("DELETE FROM " . $redirection_items . " WHERE `group_id`='" . get_option('decategorizer_group_id') . "'");
-			echo '<div class="updated fade"><p>Decategorizer redirections deleted.</p></div>';
-			return;
+			return $arg_one;
 		}
 		
 		// for versions prior to 2.8
-		if( 2.8 >= (float)substr($wp_version, 0, 3) )
-		{
-			// force $wp_rewrite restart
-			// so get_category_link() uses the new structure
+		// force $wp_rewrite restart so get_category_link() uses the new structure
+		if( 2.8 > (float)substr($wp_version, 0, 3) )
 			$wp_rewrite->init();
-		}
 	}
-	
 
-	
 	// get blog subfolder
 	// returns empty string or /FOLDER or /FOLDER/SUBFOLDER, etc.
 	$server_name = preg_match("#http://([^/]+)[/]?(.*)#", get_bloginfo('url'), $matches);	
@@ -282,7 +287,7 @@ function decategorizer_check_redirects()
 	// end if there are no categories
 	// or, somehow, permalink structure is the default one
 	if( empty( $cat_uris ) || false !== strpos($cat_uris[0], "?cat=") )
-		return false;
+		return $arg_one;
 
 	// add main regexp into database as a redirection item
 	$values = "'', '" . addslashes( get_option('decategorizer_regexp') ) . "', '1', '', '', '', '" . get_option('decategorizer_group_id') . "','enabled','pass','0','" . $blog_folder . "/" . $category_base . "/\$1/page/\$2\$3\$4','url'";
@@ -333,11 +338,11 @@ function decategorizer_check_redirects()
 		$cr_message .= "Redirection " . current($redir) . " added<br />";
 	}
 	
-	if( false === $debug )
-		$cr_message = "Decategorizer redirections updated.";
-	
-	echo '<div class="updated fade"><p>' . $cr_message . '</p></div>';
-	
+	if( false !== $debug && "options-permalink.php" == $pagenow )
+		echo '<div class="updated fade"><p>' . $cr_message . '</p></div>';
+		
+	decategorizer_log($cr_message);
+		
 	return $arg_one;
 }
 
@@ -354,7 +359,7 @@ function decategorizer_deactivate()
 	}
 	else
 	{
-		echo "Decategorizer group id option not found! Redirections added by the plugin have not been deleted!";
+		decategorizer_log("Decategorizer group id option not found! Redirections added by the plugin have not been deleted!");
 	}
 }
 
@@ -395,6 +400,28 @@ function decategorizer( $output )
 	return $output;
 }
 
+// write log
+function decategorizer_log( $data )
+{
+	$data = date("Y-m-d@H:i:s") . "\n" . str_replace("<br />", "\n", $data) . "\n";
+	$filename = str_replace("\\", "/", WP_PLUGIN_DIR) . "/" . basename(dirname( __FILE__ )) . "/decategorizer_log.txt";
+	
+	if( file_exists($filename) )
+		$data .= implode("", file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) . "\n";
+	
+	$file = fopen($filename, "w+t");
+
+	if( false !== $file )
+	{		
+		fwrite($file, $data);
+		
+		if( 102400 < (filesize($filename) + strlen($data)) )
+			ftruncate($file, 102400);
+	}
+	
+	fclose($file);
+}
+
 /* hooks */
 
 // print notices on top of admin pages
@@ -419,9 +446,10 @@ add_action('update_option_tag_base', 			'decategorizer_check_redirects', 100, 2)
 add_action('update_option_home', 				'decategorizer_check_redirects', 100, 2);
 add_action('permalink_structure_changed', 		'decategorizer_check_redirects', 100, 2);
 
-add_action('create_category', 		'decategorizer_check_redirects');
 add_action('edit_category', 		'decategorizer_check_redirects');
 add_action('delete_category', 		'decategorizer_check_redirects');
+add_action('wp_insert_post', 		'check_redirects');
+add_action('delete_post', 			'check_redirects');
 
 add_filter('category_link', 		'decategorizer', 100, 1);
 add_filter('get_pagenum_link', 		'decategorizer', 100, 1);
