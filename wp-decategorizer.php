@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage or in the plugin's readme.txt file.
 Author: Bruno "Aesqe" Babic
-Version: 0.6.3
+Version: 0.7
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ Author URI: http://skyphe.org
 
 // set up the constants
 if ( !defined( 'WP_CONTENT_URL' ) )
-	define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
+	define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content' );
 if ( !defined( 'WP_CONTENT_DIR' ) )
 	define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
 if ( !defined( 'WP_PLUGIN_URL' ) )
@@ -96,6 +96,9 @@ function decategorizer_ri_checker()
 function decategorizer_check_redirects()
 {
 	global $redirection, $wpdb, $table_prefix, $wp_rewrite, $wp_version, $pagenow;
+	
+	if( false === get_option("decategorizer_excluded_user_paths") )
+		add_option("decategorizer_excluded_user_paths", "");
 	
 	$arg_one = func_get_arg(0);
 	
@@ -193,7 +196,7 @@ function decategorizer_check_redirects()
 
 	// get blog subfolder
 	// returns empty string or /FOLDER or /FOLDER/SUBFOLDER, etc.
-	$server_name = preg_match("#http://([^/]+)[/]?(.*)#", get_bloginfo('url'), $matches);	
+	$server_name = preg_match("#http://([^/]+)[/]?(.*)#", get_bloginfo('url'), $matches);
 	$blog_folder = trim( str_replace("http://" . $matches[1], "", get_bloginfo('url')) );
 	
 	$cr_message .= "Blog subfolder : " . $blog_folder . "<br />";
@@ -233,13 +236,28 @@ function decategorizer_check_redirects()
 	if( "" != $page_for_posts )
 	{
 		$page = get_page(intval($page_for_posts));
-		$page_for_posts = '|^/' . $page->post_name . '/';
+		$page_for_posts = '|^' . $blog_folder . '/' . $page->post_name . '/';
 	}
 	
 	if( false !== strpos(get_option("permalink_structure"), "%post_id%") )
 		$date_archives_lead = "/date";
 	else
 		$date_archives_lead = "";
+		
+	$user_paths	= "";
+	
+	if( false !== get_option("decategorizer_excluded_user_paths") )
+	{
+		$up = str_replace("\r\n", "\n", trim(get_option("decategorizer_excluded_user_paths")));
+		$up = explode("\n", $up);
+		$up = array_unique($up);
+		
+		foreach( $up as $sup )
+		{
+			if( "" != trim($sup) )
+				$user_paths .= trim($sup) . '|^';
+		}
+	}
 	
 	// construct the regular expression
 	$the_regexp = '(?!^' . 
@@ -250,6 +268,7 @@ function decategorizer_check_redirects()
 					$blog_folder . '/comments/|^' . 										// or comments
 					$blog_folder . '/' . $category_base . '/' . 							// or it has category_base in url -> do a 301
 					$page_for_posts . '|^' . 												// or if it's home front page
+					$user_paths  . 															// or the user added paths
 					$blog_folder . '/page/)^';												// or a paged home page
 				
 				if( "" != $permalink_lead && "" == get_option("category_base") )
@@ -345,6 +364,38 @@ function decategorizer_check_redirects()
 	decategorizer_log($cr_message);
 		
 	return $arg_one;
+}
+
+function decategorizer_options()
+{
+	if(isset($_POST["decategorizer_excluded_user_paths"]))
+	{
+		update_option("decategorizer_excluded_user_paths", $_POST["decategorizer_excluded_user_paths"]);
+	}
+	
+	add_settings_section("decategorizer_section", "Decategorizer options", "decategorizer_options_sections", "permalink");
+
+	add_settings_field("decategorizer_excluded_user_paths", 
+					   "<p style='margin-top: -0.3em;'>Here you can add page slugs/paths which should be excluded from Decategorizer paging redirection.</p>
+					    <p>If, for example, you have a page with custom queries and you're using 'category style paging' (/page/2/) for that page,
+						add the path to that page here (without /page/number/).</p>
+						<p>Each path must be on a new line.</p>
+						<p>Example:<br /><code>/my-page-name/my-subpage/</code><br /><code>/my-page-two/subpage-three/</code></p>", 
+					   create_function("", 'return decategorizer_options_output( array("name" => "decategorizer_excluded_user_paths") );'), 
+					   "permalink", 
+					   "decategorizer_section");
+	register_setting("permalink", "decategorizer_excluded_user_paths");
+}
+add_action("admin_init", "decategorizer_options");
+
+function decategorizer_options_output($args)
+{
+	echo "<textarea cols='42' rows='14' name='" . $args["name"] . "' id='" . $args["name"] . "'>" . get_option($args["name"]) . "</textarea>";
+}
+
+function decategorizer_options_sections($what)
+{
+	echo "";
 }
 
 function decategorizer_deactivate()
@@ -446,9 +497,10 @@ if( 2.8 > (float)substr($wp_version, 0, 3) )
 else
 	add_action('permalink_structure_changed', 		'decategorizer_check_redirects', 100, 2);
 
-add_action('update_option_category_base', 		'decategorizer_check_redirects', 100, 2);
-add_action('update_option_tag_base', 			'decategorizer_check_redirects', 100, 2);
-add_action('update_option_home', 				'decategorizer_check_redirects', 100, 2);
+add_action('update_option_category_base', 						'decategorizer_check_redirects', 100, 2);
+add_action('update_option_tag_base', 							'decategorizer_check_redirects', 100, 2);
+add_action('update_option_home', 								'decategorizer_check_redirects', 100, 2);
+add_action('update_option_decategorizer_excluded_user_paths',	'decategorizer_check_redirects', 100, 2);
 
 add_action('edit_category', 		'decategorizer_check_redirects');
 add_action('delete_category', 		'decategorizer_check_redirects');
