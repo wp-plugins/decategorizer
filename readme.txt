@@ -35,10 +35,10 @@ Redirection version 2.x. is recommended (Last tested with v2.1.9)
 
 **Changelog:**
 
-0.7 = may 30th 2009 :
-- additional options on the permalnik settings page in admin
-- you can create a list of paths which will be ignored by the 
-paging redirection (thanks Travis!)
+0.7.1 = may 30th 2009 :
+- additional options on the permalnik settings page in admin.
+now you can create a list of paths which will be ignored by the 
+paging redirection (thanks Travis!) => _WORDPRESS 2.7 AND UP ONLY_
 
 0.6.3 = may 17th 2009 :
 - fixed a bug with 301 redirections not respecting the user added 

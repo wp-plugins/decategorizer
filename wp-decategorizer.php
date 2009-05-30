@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage or in the plugin's readme.txt file.
 Author: Bruno "Aesqe" Babic
-Version: 0.7
+Version: 0.7.1
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -373,18 +373,21 @@ function decategorizer_options()
 		update_option("decategorizer_excluded_user_paths", $_POST["decategorizer_excluded_user_paths"]);
 	}
 	
-	add_settings_section("decategorizer_section", "Decategorizer options", "decategorizer_options_sections", "permalink");
-
-	add_settings_field("decategorizer_excluded_user_paths", 
-					   "<p style='margin-top: -0.3em;'>Here you can add page slugs/paths which should be excluded from Decategorizer paging redirection.</p>
-					    <p>If, for example, you have a page with custom queries and you're using 'category style paging' (/page/2/) for that page,
-						add the path to that page here (without /page/number/).</p>
-						<p>Each path must be on a new line.</p>
-						<p>Example:<br /><code>/my-page-name/my-subpage/</code><br /><code>/my-page-two/subpage-three/</code></p>", 
-					   create_function("", 'return decategorizer_options_output( array("name" => "decategorizer_excluded_user_paths") );'), 
-					   "permalink", 
-					   "decategorizer_section");
-	register_setting("permalink", "decategorizer_excluded_user_paths");
+	if( function_exists("add_settings_section") )
+	{
+		add_settings_section("decategorizer_section", "Decategorizer options", "decategorizer_options_sections", "permalink");
+	
+		add_settings_field("decategorizer_excluded_user_paths", 
+						   "<p style='margin-top: -0.3em;'>Here you can add page slugs/paths which should be excluded from Decategorizer paging redirection.</p>
+							<p>If, for example, you have a page with custom queries and you're using 'category style paging' (/page/2/) for that page,
+							add the path to that page here (without /page/number/).</p>
+							<p>Each path must be on a new line.</p>
+							<p>Example:<br /><code>/my-page-name/my-subpage/</code><br /><code>/my-page-two/subpage-three/</code></p>", 
+						   create_function("", 'return decategorizer_options_output( array("name" => "decategorizer_excluded_user_paths") );'), 
+						   "permalink", 
+						   "decategorizer_section");
+		register_setting("permalink", "decategorizer_excluded_user_paths");
+	}
 }
 add_action("admin_init", "decategorizer_options");
 
