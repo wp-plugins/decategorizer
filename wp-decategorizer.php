@@ -8,7 +8,7 @@ a plugin by John Godley (Urban Giraffe) called 'Redirection'
 (http://urbangiraffe.com/plugins/redirection/). Please read the complete 
 tutorial on the plugin's homepage or in the plugin's readme.txt file.
 Author: Bruno "Aesqe" Babic
-Version: 0.7.1
+Version: 0.7.1.1
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
@@ -249,13 +249,28 @@ function decategorizer_check_redirects()
 	if( false !== get_option("decategorizer_excluded_user_paths") )
 	{
 		$up = str_replace("\r\n", "\n", trim(get_option("decategorizer_excluded_user_paths")));
-		$up = explode("\n", $up);
-		$up = array_unique($up);
+		
+		if( false !== strpos($up, "\n") )
+		{
+			$up = explode("\n", $up);
+			$up = array_unique($up);
+		}
+		else
+		{
+			$up = array(get_option("decategorizer_excluded_user_paths"));
+		}
 		
 		foreach( $up as $sup )
 		{
-			if( "" != trim($sup) )
-				$user_paths .= trim($sup) . '|^';
+			$sup = trim($sup);
+
+			if( "" != $sup )
+			{
+				if( "" != $blog_folder && false === strpos($sup, $blog_folder) )
+					$sup = $blog_folder . "/" . ltrim($sup, "/");
+				
+				$user_paths .= $sup . '|^';
+			}
 		}
 	}
 	
