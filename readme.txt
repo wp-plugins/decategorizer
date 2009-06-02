@@ -35,7 +35,7 @@ Redirection version 2.x. is recommended (Last tested with v2.1.9)
 
 **Changelog:**
 
-0.7.1.1 = may 30th 2009 :
+0.7.1.1 = june 2nd 2009 :
 - small bugfix for subfolder installations
 
 0.7.1 = may 30th 2009 :
