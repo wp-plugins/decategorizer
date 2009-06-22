@@ -33,109 +33,127 @@ plugin to work and it will disable itself if Redirection is
 not installed.
 Redirection version 2.x. is recommended (Last tested with v2.1.9)
 
-**Changelog:**
+== Changelog ==
 
-0.7.1.1 = june 2nd 2009 :
-- small bugfix for subfolder installations
+= 0.7.1.1 =
+* june 2nd 2009
+* small bugfix for subfolder installations
 
-0.7.1 = may 30th 2009 :
-- additional options on the permalnik settings page in admin.
-now you can create a list of paths which will be ignored by the 
+= 0.7.1 =
+* may 30th 2009
+* additional options on the permalink settings page in admin.
+* now you can create a list of paths which will be ignored by the 
 paging redirection (thanks Travis!) => _WORDPRESS 2.7 AND UP ONLY_
 
-0.6.3 = may 17th 2009 :
-- fixed a bug with 301 redirections not respecting the user added 
+= 0.6.3 =
+* may 17th 2009
+* fixed a bug with 301 redirections not respecting the user added 
 text string at the beginning of permalink structure
 
-0.6.2.3 = may 17th 2009 :
-- minor code corrections
-- informational messages are no longer echoed, but saved to a log file 
+= 0.6.2.3 =
+* may 17th 2009
+* minor code corrections
+* informational messages are no longer echoed, but saved to a log file 
 to prevent headers already sent errors on add/edit post/category
 
-0.6.2 = may 14th 2009 :
-- i _might_ have broken a few sites with that 0.6 version, so i'll 
+= 0.6.2 =
+* may 14th 2009
+* i _might_ have broken a few sites with that 0.6 version, so i'll 
 just apologize preemptively - sorry! :|
-- version 0.6.2 is what version 0.6 was supposed to be
-- big thanks goes to westi for explaining the event sequence of 
+* version 0.6.2 is what version 0.6 was supposed to be
+* big thanks goes to westi for explaining the event sequence of 
 "update_option_permalink_structure" hook
 
-0.6 = may 11th 2009 :
-- fixed a bunch of bugs
-- plugin now correctly updates the redirections when permalink 
+= 0.6 =
+* may 11th 2009
+* fixed a bunch of bugs
+* plugin now correctly updates the redirections when permalink 
 structure is updated, or deletes them when structure is empty
-- plugin now deletes the data it has created when it is deactivated
-- added support for custom strings in permalink structures, 
+* plugin now deletes the data it has created when it is deactivated
+* added support for custom strings in permalink structures, 
 for example /articles/%postname%.html (thanks Dominic!).
-i'll be releasing another update soon - you'll be able to 
+* i'll be releasing another update soon - you'll be able to 
 choose whether you want the trailing slash or not in your 
 permalinks, and also some other yum things.
 
-0.5.4.3 = february 20th 2009 : 
-- fixed the failing feed redirections for some permalink structures
+= 0.5.4.3 =
+* february 20th 2009
+* fixed the failing feed redirections for some permalink structures
 (thanks Ray!)
-- better description and tags in readme for Sphinx :)
+* better description and tags in readme for Sphinx :)
 
-0.5.4.2 = february 17th 2009 : 
-- added exceptions if is_admin() or is_search()
+= 0.5.4.2 =
+* february 17th 2009
+* added exceptions if is_admin() or is_search()
 
-0.5.4 = february 14th 2009 : 
-- had to change the redirection regexes again, to make it possible 
+= 0.5.4 =
+* february 14th 2009
+* had to change the redirection regexes again, to make it possible 
 for urls like /categoryname/subcategoryname/?var=value (thanks T4L!)
 
-0.5.3.2 = february 13th 2009 : 
-- changed redirection form from /cat_name/$ to 
+= 0.5.3.2 =
+* february 13th 2009
+* changed redirection form from /cat_name/$ to 
 ^/(optional subfolder install)/cat_name/$, so if the install is in a 
 subfolder (eg. http://domain.com/wordpress), that subfolder is now 
 included in all redirections, just to make it failsafe.
-- fixed failing home pagination in some cases (/HOME/page/2/) when
+* fixed failing home pagination in some cases (/HOME/page/2/) when
 wordpress is installed in a subdirectory.
 
-0.5.3.1	= february 12th 2009 : 
+= 0.5.3.1 =
+* february 12th 2009
 fixed the randomly appearing slash at the end of category list when 
 using 'wp_list_categories' function to print it
 
-0.5.3 = february 10th 2009 : 
-changed category redirections into regexes and added $ (end of string) 
+= 0.5.3 =
+* february 10th 2009
+* changed category redirections into regexes and added $ (end of string) 
 at the end of expressions to make sure it parses category URLs _only_.
-also tested with wordpress MU 2.7 (and Redirection 2.1.7) and everything 
+* also tested with wordpress MU 2.7 (and Redirection 2.1.7) and everything 
 seems to work just fine :)
 
-0.5.2	= october 31st : 
-minor code changes
+= 0.5.2 =
+* october 31st 2008
+* minor code changes
 
-0.5.1	= october 30th 2008 : 
-fixed:
-	static homepage pagination
-	static posts page pagination
-	301 redirection for paginated category/tag archives with slugs including category_base
+= 0.5.1 =
+* october 30th 2008
+* static homepage pagination
+* static posts page pagination fixed
+* 301 redirection for paginated category/tag archives with slugs including category_base
 
-0.5		= october 26th 2008 : 
-Plugin will now automatically disable itself if "Redirection" is 
+= 0.5 =
+* october 26th 2008
+* Plugin will now automatically disable itself if "Redirection" is 
 not installed/activated.
-Added notifications on top of the admin screens.
-Added 301 redirection for old permalinks containing /category_base/
+* Added notifications on top of the admin screens.
+* Added 301 redirection for old permalinks containing /category_base/
 (thanks Utilaje!).
-Added support for permalinks without trailing slash (thanks PH!).
-Redirections are now added when the plugin is activated, and on a 
+* Added support for permalinks without trailing slash (thanks PH!).
+* Redirections are now added when the plugin is activated, and on a 
 few other occasions (see bottom of plugin file for all the hooks).
-Plugin no longer runs on each and every pageload. Hooray :)
+* Plugin no longer runs on each and every pageload. Hooray :)
 
-0.4		- plugin now checks if redirection tables exist (d'oh) before 
+= 0.4 =
+* plugin now checks if redirection tables exist (d'oh) before 
 starting to work. <del>It also checks whether adding redirections is 
 actually needed (if you have no child categories, for example).</del>
 -> removed in 0.5 for compatibility reasons ('/%postname%' permalinks).
 
-0.3		- added automatic creation of redirection 
-rules. PLEASE NOTE: Although I've been testing the plugin for the past 
+= 0.3 =
+* added automatic creation of redirection rules. 
+PLEASE NOTE: Although I've been testing the plugin for the past 
 two hours, do try it at home first.
 REMINDER TO SELF: addslashes(), INSERT, save your sanity...
 
-0.2.1	- instead of setting back category_base to its default value, 
+= 0.2.1 =
+* instead of setting back category_base to its default value, 
 the current value is used, so one's permalinks don't get broken if 
 they decide to deactivate the plugin. Sorry for that, current users :/
 Please check your 'category_base' value.
 
-0.2		- added the filter to 'category_link' as well. No more 
+= 0.2 =
+* added the filter to 'category_link' as well. No more 
 "/category/" in links when using "Google XML Sitemaps" and "Dagon 
 Design Sitemap Generator" plugins :)
 
