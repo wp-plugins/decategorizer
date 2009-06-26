@@ -2,13 +2,9 @@
 /*
 Plugin Name: Decategorizer
 Plugin URI: http://skyphe.org/code/wordpress/decategorizer/
-Description: Removes "/category/" (category_base text) from your site links.
-It will do you no good by itself - it is meant to be used in conjuction with 
-a plugin by John Godley (Urban Giraffe) called 'Redirection' 
-(http://urbangiraffe.com/plugins/redirection/). Please read the complete 
-tutorial on the plugin's homepage or in the plugin's readme.txt file.
+Description: **THIS PLUGIN IS NOW OBSOLETE, PLEASE SWITCH TO 'WP NO CATEGORY BASE' PLUGIN**
 Author: Bruno "Aesqe" Babic
-Version: 0.7.1.1
+Version: 0.7.1.2
 Author URI: http://skyphe.org
 
 ////////////////////////////////////////////////////////////////////////////
