@@ -10,7 +10,14 @@ Stable tag: trunk
 Quick setup and no editing required. 301 redirections are added 
 automatically.
 
-== Description == 
+== Description ==
+
+**THIS PLUGIN IS NOW OBSOLETE,PLEASE SWITCH TO 
+['WP NO CATEGORY BASE'](http://wordpress.org/extend/plugins/wp-no-category-base/) 
+PLUGIN**
+
+**Go to http://skyphe.org/code/wordpress/decategorizer/ for the 
+explanation, thanks!**
 
 "Decategorizer" will remove the category base from your category 
 links, and turn your category URLs from something like 
